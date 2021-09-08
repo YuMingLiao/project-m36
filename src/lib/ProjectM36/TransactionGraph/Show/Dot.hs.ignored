@@ -5,8 +5,10 @@ import qualified Data.Text as T
 import qualified Data.Set as S
 import qualified Data.Map as M
 
+transactionParentIds = parentIds
+
 graphAsDot :: TransactionGraph -> String                              
-graphAsDot (TransactionGraph heads transSet) = "digraph {" ++ dot ++ headInfo ++ "}"
+graphAsDot graph@(TransactionGraph heads transSet) = "digraph {" ++ dot ++ headInfo ++ "}"
   where
     dot = S.foldr transactionAsDot "" transSet
     transactionAsDot trans acc = acc ++ childArrows trans ++ parentArrows trans
@@ -17,6 +19,7 @@ graphAsDot (TransactionGraph heads transSet) = "digraph {" ++ dot ++ headInfo ++
     tidLabel l = "\"" ++ show l ++ "\""
     oneArrow trans tid = transLabel trans ++ " -> " ++ tidLabel tid ++ ";"
     headInfo = M.foldrWithKey (\headName t acc -> transLabel t ++ " [label=\"" ++ (show . transactionId) t ++ ":" ++ T.unpack headName ++ "\"];" ++ acc) "" heads
-
+    transactionChildIds = S.map transactionId (S.filter filt (transForGraph graph))
+    filt trans' = S.member (transactionId "") (parentIds trans') 
 
 
