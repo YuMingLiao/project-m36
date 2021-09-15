@@ -105,6 +105,8 @@ data RelationalError = NoSuchAttributeNamesError (S.Set AttributeName)
                      | MerkleHashValidationError TransactionId MerkleHash MerkleHash
 
                      | MultipleErrors [RelationalError]
+                     
+                     | AtomTypeNotEnumerableError [AtomType]
                        deriving (Show,Eq,Generic,Typeable, NFData) 
 
 data PersistenceError = InvalidDirectoryError FilePath | 

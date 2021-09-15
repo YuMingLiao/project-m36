@@ -111,9 +111,10 @@ singleTupleSetJoin tup1 tupSet = HS.union
             
 -- if the keys share some keys and values, then merge the tuples
 -- if there are shared attributes, if they match, create a new tuple from the atoms of both tuples based on the attribute ordering argument
+-- if there are no shard attributes, do the same thing for the sake of cross product.
 singleTupleJoin :: Attributes -> RelationTuple -> RelationTuple -> Either RelationalError (Maybe RelationTuple)
 singleTupleJoin joinedAttrs tup1@(RelationTuple tupAttrs1 _) tup2@(RelationTuple tupAttrs2 _) = if
-  V.null keysIntersection || atomsForAttributeNames keysIntersection tup1 /= atomsForAttributeNames keysIntersection tup2
+  {- V.null keysIntersection || -} atomsForAttributeNames keysIntersection tup1 /= atomsForAttributeNames keysIntersection tup2
   then
     return Nothing
   else

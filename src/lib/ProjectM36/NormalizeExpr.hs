@@ -43,6 +43,7 @@ processRelationalExpr (Extend extendExpr expr) =
   Extend <$> processExtendTupleExpr extendExpr <*> processRelationalExpr expr
 processRelationalExpr (With macros expr) =
   With <$> mapM (\(wnexpr, macroExpr) -> (,) <$> processWithNameExpr wnexpr <*> processRelationalExpr macroExpr) macros <*> processRelationalExpr expr
+processRelationalExpr (Enumerate attrExprs) = Enumerate <$> mapM processAttributeExpr attrExprs 
 
 processWithNameExpr :: WithNameExpr -> ProcessExprM GraphRefWithNameExpr
 processWithNameExpr (WithNameExpr rvname ()) =

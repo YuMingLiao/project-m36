@@ -222,8 +222,10 @@ data RelationalExprBase a =
   Extend (ExtendTupleExprBase a) (RelationalExprBase a) |
   --Summarize :: AtomExpr -> AttributeName -> RelationalExpr -> RelationalExpr -> RelationalExpr -- a special case of Extend
   --Evaluate relationalExpr with scoped views
-  With [(WithNameExprBase a, RelationalExprBase a)] (RelationalExprBase a)
-  deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable)
+  With [(WithNameExprBase a, RelationalExprBase a)] (RelationalExprBase a) |
+  --Enumerate :: RelationalExpr -> RelationalExpr --reference the type of a relational expression and produce total values of the relation variable.
+  Enumerate [AttributeExprBase a] 
+ deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable)
 
 instance Hashable RelationalExpr
     

@@ -148,7 +148,7 @@ relOperators = [
   ]
 
 relExprP :: RelationalMarkerExpr a => Parser (RelationalExprBase a)
-relExprP = try withMacroExprP <|> makeExprParser relTerm relOperators
+relExprP = try withMacroExprP <|> try enumP <|> makeExprParser relTerm relOperators
 
 --allow for additional characters
 attributeNameP :: Parser AttributeName
@@ -281,3 +281,7 @@ createMacroP = do
   pure (WithNameExpr name marker, expr)
 
 
+enumP :: RelationalMarkerExpr a => Parser (RelationalExprBase a)
+enumP = do
+  reservedOp "enum"
+  Enumerate <$> makeAttributeExprsP

@@ -13,6 +13,7 @@ import ProjectM36.AtomType
 import ProjectM36.Attribute (emptyAttributes, attributesFromList)
 import ProjectM36.ScriptSession
 import ProjectM36.DataTypes.Primitive
+import ProjectM36.DataTypes.Enumerate
 import ProjectM36.AtomFunction
 import ProjectM36.DatabaseContextFunction
 import ProjectM36.Arbitrary
@@ -28,6 +29,7 @@ import Data.Maybe
 import Data.Either
 import Data.Char (isUpper)
 import Data.Time
+import Control.Monad (foldM)
 import qualified Data.List.NonEmpty as NE
 import Data.Functor.Identity
 import qualified Data.Text as T
@@ -1083,6 +1085,41 @@ evalGraphRefRelationalExpr expr@With{} =
   --strategy B: drop in macros in place (easier programmatically)
   --strategy B implementation
   evalGraphRefRelationalExpr (substituteWithNameMacros [] expr)
+evalGraphRefRelationalExpr (Enumerate attrExprs) = do
+-- throw exceptions on non-enumerable atomTypes in attributes
+-- need nested datatypes enum
+-- if all atomTypes are enumerable,
+-- (enum a) join (enum b) join (enum c) ...
+  attrs <- mapM evalGraphRefAttrExpr attrExprs
+  let eiRels = map enumerate attrs
+  case null attrs of
+       True  -> pure relationTrue
+       False -> case all isRight eiRels of
+         True  -> do
+            let rels = rights eiRels
+                mNeRels = NE.nonEmpty rels
+            case mNeRels of
+                 Nothing -> pure relationFalse 
+                 Just neRels -> lift $ except $ foldl (\eiRelA relB-> case eiRelA of 
+                   Left err  -> Left err
+                   Right relA -> relA `join` relB) (Right (NE.head neRels)) (NE.tail neRels)
+         False -> lift $ except $ Left (someErrors (lefts eiRels)) 
+--      mctx <- gre_context <$> askEnv
+--      case mctx of
+--      Nothing -> throwError NoUncommittedContextInEvalError
+--      Just ctx -> do
+--        let tcMap = typeConstructorMapping ctx
+--        let DCDefs = map (typ -> lookup typ tcMap) attrs 
+
+enumerate :: Attribute -> Either RelationalError Relation
+enumerate (Attribute attrName aType) = 
+  case aType of
+    BoolAtomType -> pure relationTrue
+    ConstructedAtomType _ tvmap -> 
+      case M.null tvmap of 
+        True  -> pure relationTrue
+        False -> pure relationTrue
+    _ -> pure relationTrue 
 
 dbContextForTransId :: TransactionId -> TransactionGraph -> Either RelationalError DatabaseContext
 dbContextForTransId tid graph = do
