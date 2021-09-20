@@ -273,7 +273,7 @@ optimizeGraphRefRelationalExpr e@(Extend _ _) = pure e
 
 optimizeGraphRefRelationalExpr e@(With _ _) = pure e  
 
-optimizeGraphRefRelationalExpr e@(Enumerate _) = pure e  
+optimizeGraphRefRelationalExpr e@(Enumerate _ _) = pure e  
 
 -- database context expr
 optimizeGraphRefDatabaseContextExpr :: GraphRefDatabaseContextExpr -> GraphRefSOptDatabaseContextExprM GraphRefDatabaseContextExpr
@@ -501,7 +501,7 @@ applyStaticRestrictionCollapse expr =
     ExistingRelation _ -> expr
     RelationVariable _ _ -> expr
     With _ _ -> expr
-    Enumerate _ -> expr
+    Enumerate _ _ -> expr
     Project attrs subexpr -> 
       Project attrs (applyStaticRestrictionCollapse subexpr)
     Union sub1 sub2 ->
@@ -545,7 +545,7 @@ applyStaticRestrictionPushdown expr = case expr of
   ExistingRelation _ -> expr
   RelationVariable _ _ -> expr
   With _ _ -> expr
-  Enumerate _ -> expr
+  Enumerate _ _ -> expr
   Project _ _ -> expr
   --this transformation cannot be inverted because the projection attributes might not exist in the inverted version
   Restrict restrictAttrs (Project projAttrs subexpr) -> 

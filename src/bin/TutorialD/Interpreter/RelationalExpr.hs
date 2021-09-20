@@ -284,4 +284,6 @@ createMacroP = do
 enumP :: RelationalMarkerExpr a => Parser (RelationalExprBase a)
 enumP = do
   reservedOp "enum"
-  Enumerate <$> makeAttributeExprsP
+  attrExprs <- makeAttributeExprsP 
+  marker <- parseMarkerP
+  pure $ Enumerate attrExprs marker

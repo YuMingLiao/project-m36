@@ -49,7 +49,7 @@ substituteWithNameMacros macros (With moreMacros expr) =
         filter (\(w,_) -> w /= wnexpr) acc ++ [(wnexpr, subExpr)] in
         --scan for a match- if it exists, replace it (representing a with clause at a lower level
   substituteWithNameMacros newMacros expr
-substituteWithNameMacros _ e@(Enumerate _) = e
+substituteWithNameMacros _ e@(Enumerate _ _) = e
 
 substituteWithNameMacrosRestrictionPredicate :: WithNameAssocs -> GraphRefRestrictionPredicateExpr -> GraphRefRestrictionPredicateExpr
 substituteWithNameMacrosRestrictionPredicate macros pred' =

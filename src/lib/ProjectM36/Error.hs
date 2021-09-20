@@ -106,7 +106,7 @@ data RelationalError = NoSuchAttributeNamesError (S.Set AttributeName)
 
                      | MultipleErrors [RelationalError]
                      
-                     | AtomTypeNotEnumerableError [AtomType]
+                     | TotalityNotSupportedError AtomType
                        deriving (Show,Eq,Generic,Typeable, NFData) 
 
 data PersistenceError = InvalidDirectoryError FilePath | 

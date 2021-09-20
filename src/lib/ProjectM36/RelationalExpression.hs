@@ -50,6 +50,8 @@ import GHC hiding (getContext)
 import Control.Exception
 import GHC.Paths
 #endif
+import ProjectM36.ShortCut (relation, tuple)
+import ProjectM36.Atomable
 
 data DatabaseContextExprDetails = CountUpdatedTuples
 
@@ -1085,13 +1087,15 @@ evalGraphRefRelationalExpr expr@With{} =
   --strategy B: drop in macros in place (easier programmatically)
   --strategy B implementation
   evalGraphRefRelationalExpr (substituteWithNameMacros [] expr)
-evalGraphRefRelationalExpr (Enumerate attrExprs) = do
+evalGraphRefRelationalExpr (Enumerate attrExprs tid) = do
 -- throw exceptions on non-enumerable atomTypes in attributes
 -- need nested datatypes enum
 -- if all atomTypes are enumerable,
 -- (enum a) join (enum b) join (enum c) ...
   attrs <- mapM evalGraphRefAttrExpr attrExprs
-  let eiRels = map enumerate attrs
+  tcMap <- typeConstructorMapping <$> gfDatabaseContextForMarker tid
+  -- aType <- lift $ except $ atomTypeForTypeConstructorValidate True tCons tConsMap M.empty
+  let eiRels = map (\x -> totalityForAttribute x tcMap []) attrs 
   case null attrs of
        True  -> pure relationTrue
        False -> case all isRight eiRels of
@@ -1102,7 +1106,7 @@ evalGraphRefRelationalExpr (Enumerate attrExprs) = do
                  Nothing -> pure relationFalse 
                  Just neRels -> lift $ except $ foldl (\eiRelA relB-> case eiRelA of 
                    Left err  -> Left err
-                   Right relA -> relA `join` relB) (Right (NE.head neRels)) (NE.tail neRels)
+                   Right relA -> relA `join` relB                                      ) (Right (NE.head neRels)) (NE.tail neRels)
          False -> lift $ except $ Left (someErrors (lefts eiRels)) 
 --      mctx <- gre_context <$> askEnv
 --      case mctx of
@@ -1111,8 +1115,62 @@ evalGraphRefRelationalExpr (Enumerate attrExprs) = do
 --        let tcMap = typeConstructorMapping ctx
 --        let DCDefs = map (typ -> lookup typ tcMap) attrs 
 
-enumerate :: Attribute -> Either RelationalError Relation
-enumerate (Attribute attrName aType) = 
+
+-- Attribute -> TypeConstructorMapping -> Either RelationalError Relation
+-- AtomType -> TypeConstructorMapping -> [AtomType] (you are in these types) -> Either RelationalError [AtomType]
+-- aType | NotSupported = return Error
+--       | BoolAtomType = toAtom $ [True, False]
+--       | ConstructedAtomType _ [] = ex. [A,B,C, ...] -- from dcDefs
+--       | ConstructedAtomType _ [a,b,c] = a cross product (sequence) ex. [ConstructedAtom DataConstructorName AtomType [Atom]] -- from dcDefs
+--             AtomType -> TypeConstructorMapping -> DataConstructorDefs
+--             DataConstructorDef -> Either RelationalError  AtomType (ConstructedAtom)
+--           any argType is in [AtomType] = return RecursiveCycleError [AtomType] ++ [argType]
+--           any error args = return error
+
+{- unfinished
+totalityForAtomType :: AtomType -> TypeConstructorMapping -> Either RelationalError [Atom] 
+totalityForAtomType BoolAtomType = Right $ map toAtom ([minBound .. maxBound] :: [Bool])
+totalityForAtomType aType@(ConstructedAtomType tConsName _) = do
+  (tConsDef, dcDefs) <- maybe (Left (TypeConstructorAtomTypeMismatch tConsName aType)) id
+  case tConsDef of 
+    ADTypeConstructorDef _ _ -> Right ()
+    otherwise -> Left $ TotalityNotSupportedError aType
+-}
+totalityForAtomType otherwise = Left (TotalityNotSupportedError otherwise) 
+
+
+-- Either Monad return Left values immediately 
+totalityForAttribute :: Attribute -> TypeConstructorMapping -> [AtomType] -> Either RelationalError Relation
+totalityForAttribute attr@(Attribute attrName aType) tcMap path = do
+  atoms <- totalityForAtomType aType tcMap
+  
+  case aType of
+    BoolAtomType -> do
+      let attrs = attributesFromList [attr]
+          atomMatrix = map ((:[]).toAtom) ([minBound .. maxBound] :: [Bool])
+      mkRelationFromList attrs atomMatrix  
+    ConstructedAtomType tConsName _ -> do
+      case findTypeConstructor tConsName tcMap of
+        Nothing -> Left (TypeConstructorAtomTypeMismatch tConsName aType) -- I believe this is already checked when evalGraphRefAttributes 
+        Just (tConsDef, dConsDefs) -> case tConsDef of
+          ADTypeConstructorDef _ _ -> do
+          let noArg (DataConstructorDef _ []) = True
+              noArg (DataConstructorDef _ _)  = False
+              getDataConstructorName (DataConstructorDef dcName _) = dcName
+              mkConstructedAtom dcName args = ConstructedAtom dcName aType args
+          case all noArg dConsDefs of
+            True  -> do
+              let attrs = attributesFromList [attr]
+                  atomList = map (((flip mkConstructedAtom) []) . getDataConstructorName) dConsDefs
+                  atomMatrix = map (:[]) atomList
+              mkRelationFromList attrs atomMatrix 
+            False -> Left (TotalityNotSupportedError aType) 
+    _ -> Left (TotalityNotSupportedError aType) 
+ 
+
+
+{-
+enumerateForAtomType (Attribute attrName aType) tcMap = 
   case aType of
     BoolAtomType -> pure relationTrue
     ConstructedAtomType _ tvmap -> 
@@ -1120,7 +1178,7 @@ enumerate (Attribute attrName aType) =
         True  -> pure relationTrue
         False -> pure relationTrue
     _ -> pure relationTrue 
-
+-}
 dbContextForTransId :: TransactionId -> TransactionGraph -> Either RelationalError DatabaseContext
 dbContextForTransId tid graph = do
   trans <- transactionForId tid graph

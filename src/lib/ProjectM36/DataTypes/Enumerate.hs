@@ -5,7 +5,8 @@ import Data.Map as M
 isEnumerableAtomType :: AtomType -> Bool
 isEnumerableAtomType typ = case typ of 
   BoolAtomType -> True 
-  ConstructedAtomType _ tvmap -> M.null tvmap -- starts small
+  -- ConstructedAtomType _ tvmap -> M.null tvmap -- starts small
+  -- ConstructedAtomType _ tvmap -> if one arg is not enumerable || one arg is itself 
   _ -> False
 
 {- 

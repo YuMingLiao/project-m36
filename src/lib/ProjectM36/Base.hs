@@ -224,7 +224,7 @@ data RelationalExprBase a =
   --Evaluate relationalExpr with scoped views
   With [(WithNameExprBase a, RelationalExprBase a)] (RelationalExprBase a) |
   --Enumerate :: RelationalExpr -> RelationalExpr --reference the type of a relational expression and produce total values of the relation variable.
-  Enumerate [AttributeExprBase a] 
+  Enumerate [AttributeExprBase a] a 
  deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable)
 
 instance Hashable RelationalExpr
