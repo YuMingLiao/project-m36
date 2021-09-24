@@ -1122,6 +1122,11 @@ evalGraphRefRelationalExpr (Enumerate attrExprs tid) = do
 --       | BoolAtomType = toAtom $ [True, False]
 --       | ConstructedAtomType _ [] = ex. [A,B,C, ...] -- from dcDefs
 --       | ConstructedAtomType _ [a,b,c] = a cross product (sequence) ex. [ConstructedAtom DataConstructorName AtomType [Atom]] -- from dcDefs
+--       *A> mconcat [Left "b", Right "a"]
+--       Left "b"
+--       *A> mconcat [Right "b", Right "a"]
+--       Right "ba"
+--
 --             AtomType -> TypeConstructorMapping -> DataConstructorDefs
 --             DataConstructorDef -> Either RelationalError  AtomType (ConstructedAtom)
 --           any argType is in [AtomType] = return RecursiveCycleError [AtomType] ++ [argType]
@@ -1135,15 +1140,14 @@ totalityForAtomType aType@(ConstructedAtomType tConsName _) = do
   case tConsDef of 
     ADTypeConstructorDef _ _ -> Right ()
     otherwise -> Left $ TotalityNotSupportedError aType
--}
-totalityForAtomType otherwise = Left (TotalityNotSupportedError otherwise) 
 
+totalityForAtomType otherwise = Left (TotalityNotSupportedError otherwise) 
+-}
 
 -- Either Monad return Left values immediately 
 totalityForAttribute :: Attribute -> TypeConstructorMapping -> [AtomType] -> Either RelationalError Relation
 totalityForAttribute attr@(Attribute attrName aType) tcMap path = do
-  atoms <- totalityForAtomType aType tcMap
-  
+--  atoms <- totalityForAtomType aType tcMap
   case aType of
     BoolAtomType -> do
       let attrs = attributesFromList [attr]
