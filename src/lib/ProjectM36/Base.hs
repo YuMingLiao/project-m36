@@ -106,7 +106,7 @@ isRelationAtomType _ = False
 type AttributeName = StringType
 
 -- | A relation's type is composed of attribute names and types.
-data Attribute = Attribute AttributeName AtomType deriving (Eq, Show, Read, Generic, NFData)
+data Attribute = Attribute AttributeName AtomType deriving (Eq, Show, Read, Generic, NFData, Typeable)
 
 instance Hashable Attribute where
   hashWithSalt salt (Attribute attrName _) = hashWithSalt salt attrName
@@ -164,7 +164,7 @@ instance Hashable RelationTuple where
       sortedTupVec = V.map (\(index, _) -> tupVec V.! index) $ V.fromList sortedAttrsIndices
   
 -- | A tuple is a set of attributes mapped to their 'Atom' values.
-data RelationTuple = RelationTuple Attributes (V.Vector Atom) deriving (Show, Read, Generic)
+data RelationTuple = RelationTuple Attributes (V.Vector Atom) deriving (Show, Read, Generic, Typeable)
 
 instance Eq RelationTuple where
   tuple1@(RelationTuple attrs1 _) == tuple2@(RelationTuple attrs2 _) =
@@ -177,7 +177,7 @@ instance Eq RelationTuple where
 
 instance NFData RelationTuple where rnf = genericRnf
 
-data Relation = Relation Attributes RelationTupleSet deriving (Show, Generic,Typeable)
+data Relation = Relation Attributes RelationTupleSet deriving (Show, Generic,Typeable, Typeable)
 
 instance Eq Relation where
   Relation attrs1 tupSet1 == Relation attrs2 tupSet2 = attrs1 == attrs2 && tupSet1 == tupSet2
@@ -235,7 +235,7 @@ data RelationalExprBase a =
   --Summarize :: AtomExpr -> AttributeName -> RelationalExpr -> RelationalExpr -> RelationalExpr -- a special case of Extend
   --Evaluate relationalExpr with scoped views
   With [(WithNameExprBase a, RelationalExprBase a)] (RelationalExprBase a)
-  deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable)
+  deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable, Typeable)
 
 instance Hashable RelationalExpr
     
@@ -475,7 +475,7 @@ data AtomExprBase a = AttributeAtomExpr AttributeName |
                       FunctionAtomExpr AtomFunctionName [AtomExprBase a] a |
                       RelationAtomExpr (RelationalExprBase a) |
                       ConstructedAtomExpr DataConstructorName [AtomExprBase a] a
-                    deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable)
+                    deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable, Typeable)
                        
 -- | Used in tuple creation when creating a relation.
 data ExtendTupleExprBase a = AttributeExtendTupleExpr AttributeName (AtomExprBase a)
@@ -552,11 +552,11 @@ type GraphRefAttributeExpr = AttributeExprBase GraphRefTransactionMarker
 -- | Create attributes dynamically.
 data AttributeExprBase a = AttributeAndTypeNameExpr AttributeName TypeConstructor a |
                            NakedAttributeExpr Attribute
-                         deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable, Hashable)
+                         deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable, Hashable, Typeable)
                               
 -- | Dynamically create a tuple from attribute names and 'AtomExpr's.
 newtype TupleExprBase a = TupleExpr (M.Map AttributeName (AtomExprBase a))
-                 deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable)
+                 deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable, Typeable)
 
 instance Hashable TupleExpr
 
