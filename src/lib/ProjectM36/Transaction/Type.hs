@@ -1,4 +1,4 @@
-module ProjectM36.Transaction where
+module ProjectM36.Transaction.Types where
 import ProjectM36.Base
 
 uid :: Transaction -> TransactionId
