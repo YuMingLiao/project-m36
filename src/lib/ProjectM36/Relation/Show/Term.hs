@@ -1,6 +1,7 @@
+{-# lANGUAGE OverloadedStrings #-}
 --writes Relation to a String suitable for terminal output
 module ProjectM36.Relation.Show.Term where
-import ProjectM36.Base
+import ProjectM36.Base hiding (StringType)
 import ProjectM36.Atom
 import ProjectM36.AtomType
 import ProjectM36.Tuple
@@ -8,6 +9,7 @@ import ProjectM36.Relation
 import ProjectM36.Attribute hiding (null)
 import qualified Data.List as L
 import qualified Data.Text as T
+import qualified Data.ByteString.Lazy.Builder as BLB
 import Control.Arrow hiding (left)
 import Data.ByteString.Base64 as B64
 import qualified Data.Text.Encoding as TE
@@ -16,6 +18,7 @@ import Data.Monoid
 #endif
 import ProjectM36.WCWidth --guess the width that the character will appear as in the terminal
 
+type StringType = BLB.Builder
 boxV :: StringType
 boxV = "│"
 boxH :: StringType
@@ -91,32 +94,32 @@ relationAsTable rel@(Relation _ tupleSet) = (header, body)
 
 showParens :: Bool -> StringType -> StringType
 showParens predicate f = if predicate then
-                      "(" `T.append` f `T.append` ")"
+                      "(" <> f <> ")"
                     else
                       f
 
 showAtom :: Int -> Atom -> StringType
 showAtom _ (RelationAtom rel) = renderTable $ relationAsTable rel
-showAtom level (ConstructedAtom dConsName _ atoms) = showParens (level >= 1 && not (null atoms)) $ T.concat (L.intersperse " " (dConsName : map (showAtom 1) atoms))
+showAtom level (ConstructedAtom dConsName _ atoms) = showParens (level >= 1 && not (null atoms)) $ concatBLB (L.intersperse " " (dConsName : map (showAtom 1) atoms))
 showAtom _ (TextAtom t) = "\"" <> t <> "\""
 showAtom _ (ByteStringAtom bs) = TE.decodeUtf8 (B64.encode bs)
 showAtom _ atom = atomToText atom
 
 renderTable :: Table -> StringType
-renderTable table = renderHeader table (fst cellLocs) `T.append` renderBody (snd table) cellLocs
+renderTable table = renderHeader table (fst cellLocs) <> renderBody (snd table) cellLocs
   where
     cellLocs = cellLocations table
 
 renderHeader :: Table -> [Int] -> StringType
-renderHeader (header, body) columnLocations = renderTopBar `T.append` renderHeaderNames `T.append` renderBottomBar
+renderHeader (header, body) columnLocations = renderTopBar <> renderHeaderNames <> renderBottomBar
   where
-    renderTopBar = boxTL `T.append` T.concat (L.intersperse boxTB (map (`repeatString` boxH) columnLocations)) `T.append` boxTR `T.append` "\n"
+    renderTopBar = boxTL <> concatBLB (L.intersperse boxTB (map (`repeatString` boxH) columnLocations)) <> boxTR <> "\n"
     renderHeaderNames = renderRow header columnLocations 1 boxV
     renderBottomBar = if null body then ""
-                      else renderHBar boxLB boxC boxRB columnLocations `T.append` "\n"
+                      else renderHBar boxLB boxC boxRB columnLocations <> "\n"
 
 renderHBar :: StringType -> StringType -> StringType -> [Int] -> StringType
-renderHBar left middle end columnLocations = left `T.append` T.concat (L.intersperse middle (map (`repeatString` boxH) columnLocations)) `T.append` end
+renderHBar left middle end columnLocations = left <> concatBLB (L.intersperse middle (map (`repeatString` boxH) columnLocations)) <> end
 
 --pad a block of potentially multi-lined text
 leftPaddedString :: Int -> Int -> StringType -> StringType
@@ -125,24 +128,24 @@ leftPaddedString lineNum size str = if lineNum > length paddedLines -1 then
                                     else
                                       paddedLines !! lineNum
   where
-    paddedLines = map (\line -> line `T.append` repeatString (size - stringDisplayLength line) " ") (breakLines str)
+    paddedLines = map (\line -> line <> repeatString (size - stringDisplayLength line) " ") (breakLines str)
 
 renderRow :: [Cell] -> [Int] -> Int -> StringType -> StringType
 renderRow cells columnLocations rowHeight interspersed = T.unlines $ map renderOneLine [0..rowHeight-1]
   where
-    renderOneLine lineNum = boxV `T.append` T.concat (L.intersperse interspersed (zipWith (leftPaddedString lineNum) columnLocations cells)) `T.append` boxV
+    renderOneLine lineNum = boxV <> concatBLB (L.intersperse interspersed (zipWith (leftPaddedString lineNum) columnLocations cells)) <> boxV
 
 renderBody :: [[Cell]] -> ([Int],[Int]) -> StringType
-renderBody cellMatrix cellLocs = renderRows `T.append` renderBottomBar
+renderBody cellMatrix cellLocs = renderRows <> renderBottomBar
   where
     columnLocations = fst cellLocs
     rowLocations = snd cellLocs
-    renderRows = T.concat (map (\(row, rowHeight)-> renderRow row columnLocations rowHeight boxV) rowHeightMatrix)
+    renderRows = concatBLB (map (\(row, rowHeight)-> renderRow row columnLocations rowHeight boxV) rowHeightMatrix)
     rowHeightMatrix = zip cellMatrix (tail rowLocations)
     renderBottomBar = renderHBar boxBL boxBB boxBR columnLocations
 
 repeatString :: Int -> StringType -> StringType
-repeatString c s = T.concat (replicate c s)
+repeatString c s = concatBLB (replicate c s)
 
 showRelation :: Relation -> StringType
 showRelation rel = renderTable (relationAsTable rel)
@@ -156,4 +159,6 @@ stringDisplayLength = T.foldr charSize 0
         1 
       else
         w 
-                                             
+
+concatBLB :: [BLB.Builder] -> BLB.Builder
+concatBLB xs = foldl (<>) xs
