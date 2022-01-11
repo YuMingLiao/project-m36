@@ -1,7 +1,7 @@
 {-# lANGUAGE OverloadedStrings #-}
 --writes Relation to a String suitable for terminal output
 module ProjectM36.Relation.Show.Term where
-import ProjectM36.Base hiding (StringType)
+import ProjectM36.Base 
 import ProjectM36.Atom
 import ProjectM36.AtomType
 import ProjectM36.Tuple
@@ -9,7 +9,9 @@ import ProjectM36.Relation
 import ProjectM36.Attribute hiding (null)
 import qualified Data.List as L
 import qualified Data.Text as T
-import qualified Data.ByteString.Lazy.Builder as BLB
+import qualified Data.Text.Lazy as TL
+import qualified Data.Text.Lazy.Builder as TLB
+import Data.Text.Lazy.Builder (Builder)
 import Control.Arrow hiding (left)
 import Data.ByteString.Base64 as B64
 import qualified Data.Text.Encoding as TE
@@ -18,35 +20,34 @@ import Data.Monoid
 #endif
 import ProjectM36.WCWidth --guess the width that the character will appear as in the terminal
 
-type StringType = BLB.Builder
-boxV :: StringType
+boxV :: Builder
 boxV = "│"
-boxH :: StringType
+boxH :: Builder
 boxH = "─"
 
-boxTL :: StringType
+boxTL :: Builder
 boxTL = "┌"
-boxTR :: StringType
+boxTR :: Builder
 boxTR = "┐"
-boxBL :: StringType
+boxBL :: Builder
 boxBL = "└"
-boxBR :: StringType
+boxBR :: Builder
 boxBR = "┘"
 
-boxLB :: StringType
+boxLB :: Builder
 boxLB = "├"
-boxRB :: StringType
+boxRB :: Builder
 boxRB = "┤"
-boxTB :: StringType
+boxTB :: Builder
 boxTB = "┬"
-boxBB :: StringType
+boxBB :: Builder
 boxBB = "┴"
 
-boxC :: StringType
+boxC :: Builder
 boxC = "┼"
 
 --represent a relation as a table similar to those drawn by Date
-type Cell = StringType
+type Cell = Builder 
 type Table = ([Cell], [[Cell]]) --header, body
 
 addRow :: [Cell] -> Table -> Table
@@ -65,9 +66,9 @@ cellLocations tab@(header, _) = (maxWidths, maxHeights)
     mergeMax = zipWith max
 
 --the normal "lines" function returns an empty list for an empty string which is not what we want
-breakLines :: StringType -> [StringType]
+breakLines :: Builder -> [Builder]
 breakLines "" = [""]
-breakLines x = T.lines x
+breakLines x = map TLB.fromLazyText (TL.lines (TLB.toLazyText x))
 
 cellSizes :: Table -> [([Int], [Int])]
 cellSizes (header, body) = map (map maxRowWidth &&& map (length . breakLines)) allRows
@@ -84,13 +85,13 @@ relationAsTable rel@(Relation _ tupleSet) = (header, body)
   where
     oAttrs = orderedAttributes (attributes rel)
     oAttrNames = orderedAttributeNames (attributes rel)
-    header = map prettyAttribute oAttrs
+    header = map TLB.fromText $ map (prettyAttribute) oAttrs
     body :: [[Cell]]
     body = L.foldr tupleFolder [] (asList tupleSet)
-    tupleFolder tuple acc = map (\attrName -> case atomForAttributeName attrName tuple of
-                                            Left _ -> "?"
-                                            Right atom -> showAtom 0 atom
-                                            ) oAttrNames : acc
+    tupleFolder tuple acc = map (TLB.fromText . (\attrName -> case atomForAttributeName attrName tuple of
+                                                                   Left _ -> "?"
+                                                                   Right atom -> showAtom 0 atom
+                                                )) oAttrNames : acc
 
 showParens :: Bool -> StringType -> StringType
 showParens predicate f = if predicate then
@@ -99,30 +100,30 @@ showParens predicate f = if predicate then
                       f
 
 showAtom :: Int -> Atom -> StringType
-showAtom _ (RelationAtom rel) = renderTable $ relationAsTable rel
-showAtom level (ConstructedAtom dConsName _ atoms) = showParens (level >= 1 && not (null atoms)) $ concatBLB (L.intersperse " " (dConsName : map (showAtom 1) atoms))
+showAtom _ (RelationAtom rel) = TL.toStrict $ TLB.toLazyText $ renderTable $ relationAsTable rel
+showAtom level (ConstructedAtom dConsName _ atoms) = showParens (level >= 1 && not (null atoms)) $ T.concat (L.intersperse " " (dConsName : map (showAtom 1) atoms))
 showAtom _ (TextAtom t) = "\"" <> t <> "\""
 showAtom _ (ByteStringAtom bs) = TE.decodeUtf8 (B64.encode bs)
 showAtom _ atom = atomToText atom
 
-renderTable :: Table -> StringType
+renderTable :: Table -> Builder 
 renderTable table = renderHeader table (fst cellLocs) <> renderBody (snd table) cellLocs
   where
     cellLocs = cellLocations table
 
-renderHeader :: Table -> [Int] -> StringType
+renderHeader :: Table -> [Int] -> Builder 
 renderHeader (header, body) columnLocations = renderTopBar <> renderHeaderNames <> renderBottomBar
   where
-    renderTopBar = boxTL <> concatBLB (L.intersperse boxTB (map (`repeatString` boxH) columnLocations)) <> boxTR <> "\n"
+    renderTopBar = boxTL <> concatTLB (L.intersperse boxTB (map (`repeatString` boxH) columnLocations)) <> boxTR <> "\n"
     renderHeaderNames = renderRow header columnLocations 1 boxV
     renderBottomBar = if null body then ""
                       else renderHBar boxLB boxC boxRB columnLocations <> "\n"
 
-renderHBar :: StringType -> StringType -> StringType -> [Int] -> StringType
-renderHBar left middle end columnLocations = left <> concatBLB (L.intersperse middle (map (`repeatString` boxH) columnLocations)) <> end
+renderHBar :: Builder -> Builder -> Builder -> [Int] -> Builder
+renderHBar left middle end columnLocations = left <> concatTLB (L.intersperse middle (map (`repeatString` boxH) columnLocations)) <> end
 
 --pad a block of potentially multi-lined text
-leftPaddedString :: Int -> Int -> StringType -> StringType
+leftPaddedString :: Int -> Int -> Builder -> Builder 
 leftPaddedString lineNum size str = if lineNum > length paddedLines -1 then
                                       repeatString size " "
                                     else
@@ -130,29 +131,29 @@ leftPaddedString lineNum size str = if lineNum > length paddedLines -1 then
   where
     paddedLines = map (\line -> line <> repeatString (size - stringDisplayLength line) " ") (breakLines str)
 
-renderRow :: [Cell] -> [Int] -> Int -> StringType -> StringType
-renderRow cells columnLocations rowHeight interspersed = T.unlines $ map renderOneLine [0..rowHeight-1]
+renderRow :: [Cell] -> [Int] -> Int -> Builder -> Builder 
+renderRow cells columnLocations rowHeight interspersed = TLB.fromLazyText $ TL.unlines $ map TLB.toLazyText $ map renderOneLine [0..rowHeight-1]
   where
-    renderOneLine lineNum = boxV <> concatBLB (L.intersperse interspersed (zipWith (leftPaddedString lineNum) columnLocations cells)) <> boxV
+    renderOneLine lineNum = boxV <> concatTLB (L.intersperse interspersed (zipWith (leftPaddedString lineNum) columnLocations cells)) <> boxV
 
-renderBody :: [[Cell]] -> ([Int],[Int]) -> StringType
+renderBody :: [[Cell]] -> ([Int],[Int]) -> Builder 
 renderBody cellMatrix cellLocs = renderRows <> renderBottomBar
   where
     columnLocations = fst cellLocs
     rowLocations = snd cellLocs
-    renderRows = concatBLB (map (\(row, rowHeight)-> renderRow row columnLocations rowHeight boxV) rowHeightMatrix)
+    renderRows = concatTLB (map (\(row, rowHeight)-> renderRow row columnLocations rowHeight boxV) rowHeightMatrix)
     rowHeightMatrix = zip cellMatrix (tail rowLocations)
     renderBottomBar = renderHBar boxBL boxBB boxBR columnLocations
 
-repeatString :: Int -> StringType -> StringType
-repeatString c s = concatBLB (replicate c s)
+repeatString :: Int -> Builder -> Builder
+repeatString c s = concatTLB (replicate c s)
 
-showRelation :: Relation -> StringType
-showRelation rel = renderTable (relationAsTable rel)
+showRelation :: Relation -> T.Text 
+showRelation rel = TL.toStrict $ TLB.toLazyText (renderTable (relationAsTable rel))
 
 --use wcwidth to guess the string width in the terminal- many CJK characters can take multiple columns in a fixed width font
-stringDisplayLength :: StringType -> Int
-stringDisplayLength = T.foldr charSize 0 
+stringDisplayLength :: Builder -> Int
+stringDisplayLength str = TL.foldr charSize 0 (TLB.toLazyText str)
   where
     charSize char accum = let w = wcwidth char in
       accum + if w < 0 then
@@ -160,5 +161,5 @@ stringDisplayLength = T.foldr charSize 0
       else
         w 
 
-concatBLB :: [BLB.Builder] -> BLB.Builder
-concatBLB xs = foldl (<>) xs
+concatTLB :: [Builder] -> Builder
+concatTLB = foldr (<>) mempty

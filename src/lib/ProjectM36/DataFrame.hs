@@ -16,6 +16,8 @@ import qualified Data.List as L
 import qualified Data.Set as S
 import Data.Maybe
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
+import qualified Data.Text.Lazy.Builder as TLB
 import Control.Arrow
 #if __GLASGOW_HASKELL__ < 804
 import Data.Monoid
@@ -102,11 +104,11 @@ fromDataFrame df = R.mkRelation (attributes df) (RelationTupleSet tuples')
     tuples' = map (\(DataFrameTuple attrs' tupVec) -> RelationTuple attrs' tupVec) (tuples df)
 
 showDataFrame :: DataFrame -> T.Text
-showDataFrame = renderTable . dataFrameAsTable
+showDataFrame = TL.toStrict . TLB.toLazyText . renderTable . dataFrameAsTable
   
 --terminal display
 dataFrameAsTable :: DataFrame -> Table
-dataFrameAsTable df = (header, body)
+dataFrameAsTable df = (map TLB.fromText header, map (map TLB.fromText) body)
   where
     oAttrNames = orderedAttributeNames (attributes df)
     oAttrs = orderedAttributes (attributes df)
@@ -115,12 +117,12 @@ dataFrameAsTable df = (header, body)
       Nothing -> arbitrary
       Just (AttributeOrder _ AscendingOrder) -> ascending
       Just (AttributeOrder _ DescendingOrder) -> descending
-    body = snd (L.foldl' tupleFolder (1 :: Int,[]) (tuples df))
-    tupleFolder (count, acc) tuple = (count + 1,
-                                      acc ++ [T.pack (show count) : map (\attrName -> case atomForAttributeName attrName tuple of
+    body = snd (L.foldr tupleFolder (1 :: Int,[]) (tuples df))
+    tupleFolder tuple (count, acc) = (count + 1,
+                                      [T.pack (show count) : map (\attrName -> case atomForAttributeName attrName tuple of
                                             Left _ -> "?"
                                             Right atom -> showAtom 0 atom
-                                            ) oAttrNames])
+                                            ) oAttrNames] ++ acc)
 
 -- | A Relation can be converted to a DataFrame for sorting, limits, and offsets.
 data DataFrameExpr = DataFrameExpr {

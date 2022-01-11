@@ -32,7 +32,6 @@ import System.Random
 import qualified Data.Text as T
 import qualified Data.List as L
 import qualified Data.Text.IO as TIO
-import qualified Data.ByteString.Lazy.Builder as BLB
 import System.IO
 import ProjectM36.Relation.Show.Term
 import GHC.Generics
@@ -61,7 +60,7 @@ displayOpResult QuietSuccessResult = return ()
 displayOpResult (DisplayRelationResult rel) = do
   gen <- newStdGen
   let randomlySortedRel = evalRand (randomizeTupleOrder rel) gen
-  BLB.hPutBuilder stdout (showRelation randomlySortedRel)
+  TIO.putStrLn (showRelation randomlySortedRel)
 displayOpResult (DisplayParseErrorResult mPromptLength err) = do
 #if MIN_VERSION_megaparsec(7,0,0)
   let errorIndent = errorOffset . NE.head . bundleErrors $ err
