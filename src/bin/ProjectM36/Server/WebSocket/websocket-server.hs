@@ -8,7 +8,7 @@ import Data.String (fromString)
 import Network.HTTP.Types (status400)
 import Network.Socket
 import Network.Wai (Application, responseLBS)
-import Network.Wai.Handler.Warp
+import Network.Wai.Handler.Warp hiding (getPort)
 import Network.Wai.Handler.WarpTLS (runTLS, tlsSettings)
 import qualified Network.Wai.Handler.WebSockets as WS
 import Network.WebSockets (defaultConnectionOptions)
@@ -16,12 +16,23 @@ import ProjectM36.Server
 import ProjectM36.Server.Config
 import ProjectM36.Server.ParseArgs
 import ProjectM36.Server.WebSocket
+import System.Environment (getEnv)
+import Control.Applicative ((<|>))
+import Data.Bits (bit)
+import System.IO (hPutStrLn, stderr, hFlush)
+import Debug.Trace
+
+getPort :: IO Int
+getPort =
+  read <$> getEnv "PORT" <|> pure 8000
+
 
 main :: IO ()
 main = do
   -- launch normal project-m36-server
+  port <- getPort
   addressMVar <- newEmptyMVar
-  wsConfig <- parseWSConfigWithDefaults (defaultServerConfig {bindPort = 8000, bindHost = "127.0.0.1"})
+  wsConfig <- parseWSConfigWithDefaults (defaultServerConfig {bindPort = fromIntegral port, bindHost = "0.0.0.0"})
 
   --usurp the serverConfig for our websocket server and make the proxied server run locally
   let serverConfig = wsServerConfig wsConfig
@@ -45,7 +56,6 @@ main = do
       wsApp = websocketProxyServer port serverHost
       waiApp = WS.websocketsOr defaultConnectionOptions wsApp backupApp
       settings = warpSettings wsHost (fromIntegral wsPort)
-
   case (configCertificateFile, configKeyFile) of
     (Just certificate, Just key) -> runTLS (tlsSettings certificate key) settings waiApp
     _ -> runSettings settings waiApp
