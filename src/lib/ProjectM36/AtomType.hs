@@ -1,3 +1,4 @@
+{-# Language MultiWayIf #-}
 module ProjectM36.AtomType where
 import ProjectM36.Base
 import qualified ProjectM36.TypeConstructorDef as TCD
@@ -16,6 +17,7 @@ import Data.Either (rights, lefts)
 import Control.Monad.Writer
 import qualified Data.Map as M
 import qualified Data.Text as T
+import Debug.Trace
 
 findDataConstructor :: DataConstructorName -> TypeConstructorMapping -> Maybe (TypeConstructorDef, DataConstructorDef)
 findDataConstructor dName = foldr tConsFolder Nothing
@@ -411,11 +413,10 @@ resolveTypeVariable _ _ = M.empty
 
 resolveFunctionReturnValue :: FunctionName -> TypeVarMap -> AtomType -> Either RelationalError AtomType
 resolveFunctionReturnValue funcName' tvMap (ConstructedAtomType tCons retMap) = do
-  let diff = M.difference retMap tvMap
-  if M.null diff then
-    pure (ConstructedAtomType tCons (M.intersection tvMap retMap))
-    else
-    Left (AtomFunctionTypeVariableResolutionError funcName' (fst (head (M.toList diff))))
+  let diff = M.difference (traceShow ("ret" ++ show retMap) $ retMap) (traceShow ("tvMap" ++ show tvMap) $ tvMap)
+  if | M.null diff -> pure (ConstructedAtomType tCons (M.intersection tvMap retMap))
+     | all isResolvedType (M.elems retMap) -> pure (ConstructedAtomType tCons retMap)
+     | otherwise -> Left (AtomFunctionTypeVariableResolutionError funcName' (fst (head (M.toList diff))))
 resolveFunctionReturnValue funcName' tvMap (TypeVariableType tvName) = case M.lookup tvName tvMap of
   Nothing -> Left (AtomFunctionTypeVariableResolutionError funcName' tvName)
   Just typ -> pure typ

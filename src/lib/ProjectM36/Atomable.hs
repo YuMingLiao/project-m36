@@ -21,6 +21,7 @@ import Data.Proxy
 import qualified Data.List.NonEmpty as NE
 import Codec.Winery
 import Data.UUID
+import Data.Typeable (typeRep)
 
 -- | All database values ("atoms") adhere to the 'Atomable' typeclass. This class is derivable allowing new datatypes to be easily marshaling between Haskell values and database values.
 class (Eq a, NFData a, Serialise a, Show a) => Atomable a where

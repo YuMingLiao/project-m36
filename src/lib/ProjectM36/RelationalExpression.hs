@@ -44,6 +44,7 @@ import ProjectM36.Function
 import Test.QuickCheck
 import qualified Data.Functor.Foldable as Fold
 import Control.Applicative
+import Debug.Trace
 #ifdef PM36_HASKELL_SCRIPTING
 import GHC hiding (getContext)
 import Control.Exception
@@ -812,7 +813,7 @@ extendGraphRefTupleExpressionProcessor relIn (AttributeExtendTupleExpr newAttrNa
     Left err -> throwError err
     Right _ -> do
       atomExprType <- typeForGraphRefAtomExpr (attributes relIn) atomExpr
-      atomExprType' <- verifyGraphRefAtomExprTypes relIn atomExpr atomExprType
+      atomExprType' <- traceShow ("extTupProc:" ++ show atomExpr ++ " " ++ show atomExprType) $ verifyGraphRefAtomExprTypes relIn atomExpr atomExprType
       let newAttrs = A.attributesFromList [Attribute newAttrName atomExprType']
           newAndOldAttrs = A.addAttributes (attributes relIn) newAttrs
       env <- ask
@@ -906,7 +907,7 @@ typeForGraphRefAtomExpr attrs (FunctionAtomExpr funcName' atomArgs transId) = do
                     handler err = throwError err
                 lift (except $ atomTypeVerify fArg arg) `catchError` handler
             ) (zip3 funcArgTypes argTypes [1..])
-      let eTvMap = resolveTypeVariables funcArgTypes argTypes
+      let eTvMap = resolveTypeVariables (traceShow ("funcArgTypes" ++ show funcArgTypes) $ funcArgTypes) (traceShow ("argTypes" ++ show argTypes) $ argTypes)
       case eTvMap of
             Left err -> throwError err
             Right tvMap ->
@@ -955,7 +956,7 @@ verifyGraphRefAtomExprTypes relIn (FunctionAtomExpr funcName' funcArgExprs tid) 
   if length funcArgTypes /= length expectedArgTypes - 1 then
       throwError (AtomTypeCountError funcArgTypes expectedArgTypes)
       else 
-      lift $ except $ atomTypeVerify expectedType (last expectedArgTypes)
+      lift $ except $ atomTypeVerify (traceShow ("expectedType:" ++ show expectedType) $ expectedType) (last expectedArgTypes)
 verifyGraphRefAtomExprTypes relIn (RelationAtomExpr relationExpr) expectedType =
   do
     let mergedAttrsEnv = mergeAttributesIntoGraphRefRelationalExprEnv (attributes relIn)
