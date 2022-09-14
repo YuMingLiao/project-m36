@@ -2,7 +2,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 --Serialise instances for ProjectM36.Base data types- orphan instance city
 module ProjectM36.Serialise.Base where
-import Codec.Winery hiding (Schema)
+import Codec.Winery hiding (Schema, NonEmpty)
 import Codec.Winery.Internal
 import Control.Monad
 import ProjectM36.Base
@@ -55,6 +55,8 @@ instance Serialise TransactionId where
   extractor = fromWordsTup <$> extractor
   decodeCurrent = fromWordsTup <$> decodeCurrent
 
+#if MIN_VERSION_winery(1,4,0)
+#else
 instance Serialise a => Serialise (NE.NonEmpty a) where
   schemaGen _ = SVector <$> getSchema (Proxy @a)
   toBuilder xs = varInt (length xs) <> foldMap toBuilder xs
@@ -63,6 +65,7 @@ instance Serialise a => Serialise (NE.NonEmpty a) where
     n <- decodeVarInt
     l <- replicateM n decodeCurrent
     pure (NE.fromList l)
+#endif
 
 fromGregorianTup :: (Integer, Int, Int) -> Day
 fromGregorianTup (a, b, c) = fromGregorian a b c

@@ -25,14 +25,28 @@ import GHCi.ObjLink
 #else
 import ObjLink
 #endif
-#if __GLASGOW_HASKELL__ >= 802
-import BasicTypes
-#endif
-import DynFlags
+
+
+#if __GLASGOW_HASKELL__ >= 902
+import GHC.Utils.Panic.Plain 
+import GHC.Utils.Outputable 
+import GHC.Types.TyThing 
+import GHC.Utils.Encoding 
+import GHC.Driver.Session
+import GHC.Types.Basic
+#else
 import Panic
 import Outputable --hiding ((<>))
 import PprTyThing
+import Encoding
+import DynFlags
+import BasicTypes
+#endif
+#if __GLASGOW_HASKELL__ >= 802
+#endif
 import Unsafe.Coerce
+#if __ GLASGOW_HASKELL__ >= 902
+import GHC.Types as Type
 #if __GLASGOW_HASKELL__ >= 802
 import Type
 #elif __GLASGOW_HASKELL__ >= 710
@@ -41,7 +55,6 @@ import Type hiding (pprTyThing)
 #endif
 import GHC.Exts (addrToAny#)
 import GHC.Ptr (Ptr(..))
-import Encoding
 #endif
 
 data ScriptSession = ScriptSession {

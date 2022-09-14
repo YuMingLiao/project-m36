@@ -1,11 +1,9 @@
 {-# LANGUAGE ExistentialQuantification,DeriveGeneric,DeriveAnyClass,FlexibleInstances,OverloadedStrings, DeriveTraversable, DerivingVia, TemplateHaskell, TypeFamilies, BangPatterns #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
-
 module ProjectM36.Base where
 import ProjectM36.DatabaseContextFunctionError
 import ProjectM36.AtomFunctionError
 import ProjectM36.MerkleHash
-
 import Data.Functor.Foldable.TH
 import qualified Data.Map as M
 import qualified Data.HashSet as HS
@@ -32,7 +30,7 @@ type StringType = Text
 
 type DatabaseName = String
 
-#if !(MIN_VERSION_hashable(1,3,4))
+#if !MIN_VERSION_hashable(1,3,4)
 --support for hashable < 1.3, hashable 1.3+ includes instance for containers
 instance Hashable (M.Map TypeVarName AtomType) where 
   hashWithSalt salt tvmap = hashWithSalt salt (M.keys tvmap)
