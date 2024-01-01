@@ -6,11 +6,11 @@ jobs:
   dockerimage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.1
-      - uses: cachix/install-nix-action@v17
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - uses: cachix/cachix-action@v10
+      - uses: cachix/cachix-action@v12
         with:
           name: project-m36
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
@@ -35,18 +35,17 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         ghc:
-          - ghc8.10
-          - ghc9.0
           - ghc9.2
+          - ghc9.4
         include:
           - os: macos-latest
-            ghc: ghc8.10
+            ghc: ghc9.2
     env:
       STACK_YAML: stack.${{ matrix.ghc }}.yaml
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.stack
           key: ${{ runner.os }}-build-stack-${{ matrix.ghc }}-${{ hashFiles(env.STACK_YAML) }}-${{ hashFiles('**/*.cabal') }}
@@ -63,7 +62,7 @@ jobs:
         run: stack test --stack-yaml=${{ env.STACK_YAML }}
       - name: Haddock
         run: stack --no-install-ghc --system-ghc --no-haddock-deps haddock
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: project-m36-${{ matrix.os }}-${{ matrix.ghc }}
           path: out/
