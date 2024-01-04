@@ -27,6 +27,7 @@ testMultipleProcessAccess = TestCase $
     let connInfo = InProcessConnectionInfo (MinimalPersistence dbdir) emptyNotificationCallback []
         master = "master"
         dudExpr = Assign "x" (RelationVariable "true" ())
+        dudExpr2 = Assign "x" (RelationVariable "false" ())
         dbdir = tmpdir </> "db"
     conn1 <- assertIOEither $ connectProjectM36 connInfo
     conn2 <- assertIOEither $ connectProjectM36 connInfo
@@ -34,12 +35,22 @@ testMultipleProcessAccess = TestCase $
     session2 <- assertIOEither (createSessionAtHead conn2 master)
     --add a commit on conn1 which conn2 doesn't know about
     assertIOEither $ executeDatabaseContextExpr session1 conn1 dudExpr
-    assertIOEither $ commit session1 conn1
-    
-    assertIOEither $ executeDatabaseContextExpr session2 conn2 dudExpr
+    assertIOEither $ autoMergeToHead session1 conn1 UnionMergeStrategy master
+    eHeadId <- headTransactionId session1 conn1
+    headId <- case eHeadId of
+      Left err -> assertFailure ("headTransactionId failed: " ++ show err) >> undefined
+      Right x -> pure x
+    print headId
+
+    assertIOEither $ executeDatabaseContextExpr session2 conn2 dudExpr2
     eHeadId <- headTransactionId session2 conn2
     headId <- case eHeadId of
       Left err -> assertFailure ("headTransactionId failed: " ++ show err) >> undefined
       Right x -> pure x
-    res <- commit session2 conn2 
-    assertEqual "commit should fail" (Left (TransactionIsNotAHeadError headId)) res
+    print headId
+    res <- autoMergeToHead session2 conn2 UnionMergeStrategy master 
+    assertEqual "autoMergeTohead should succeed" (Right ()) res
+
+-- two tutd is easier to create that error: StrategyViolatesRelationVariableMergeError
+-- need three times back and forth
+-- and tutd can succeed after error, just `automergetohead union master` again
