@@ -168,6 +168,7 @@ import qualified Network.RPC.Curryer.Client as RPC
 import qualified Network.RPC.Curryer.Server as RPC
 import Network.Socket (Socket, AddrInfo(..), getAddrInfo, defaultHints, AddrInfoFlag(..), SocketType(..), ServiceName, hostAddressToTuple, SockAddr(..))
 import GHC.Conc (unsafeIOToSTM)
+import Debug.Trace
 
 type Hostname = String
 
@@ -570,6 +571,7 @@ executeDatabaseContextExpr sessionId conn@(RemoteConnection _) dbExpr = remoteCa
 -- | Similar to a git rebase, 'autoMergeToHead' atomically creates a temporary branch and merges it to the latest commit of the branch referred to by the 'HeadName' and commits the merge. This is useful to reduce incidents of 'TransactionIsNotAHeadError's but at the risk of merge errors (thus making it similar to rebasing). Alternatively, as an optimization, if a simple commit is possible (meaning that the head has not changed), then a fast-forward commit takes place instead.
 autoMergeToHead :: SessionId -> Connection -> MergeStrategy -> HeadName -> IO (Either RelationalError ())
 autoMergeToHead sessionId (InProcessConnection conf) strat headName' = do
+  trace "Client autoMergeToHead InProcessConnection" (pure ())
   let sessions = ipSessions conf
   id1 <- nextRandom
   id2 <- nextRandom
@@ -594,7 +596,9 @@ autoMergeToHead sessionId (InProcessConnection conf) strat headName' = do
               Left err -> pure (Left err)
               Right ((discon', graph'), transactionIdsAdded) ->
                 pure (Right (discon', graph', transactionIdsAdded))
-autoMergeToHead sessionId conn@(RemoteConnection _) strat headName' = remoteCall conn (ExecuteAutoMergeToHead sessionId strat headName')
+autoMergeToHead sessionId conn@(RemoteConnection _) strat headName' = do 
+  trace "Client autoMergeToHead RemoteConnection" (pure ())
+  remoteCall conn (ExecuteAutoMergeToHead sessionId strat headName')
       
 -- | Execute a database context IO-monad-based expression for the given session and connection. `DatabaseContextIOExpr`s modify the DatabaseContext but cannot be purely implemented.
 --this is almost completely identical to executeDatabaseContextExpr above

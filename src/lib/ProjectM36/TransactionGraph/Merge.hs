@@ -9,8 +9,9 @@ import qualified Data.Map as M
 import qualified ProjectM36.TypeConstructorDef as TCD
 import qualified Data.HashSet as HS
 import qualified Data.Text as T
+import Debug.Trace
 
-data MergePreference = PreferFirst | PreferSecond | PreferNeither
+data MergePreference = PreferFirst | PreferSecond | PreferNeither deriving Show
 
 -- Check for overlapping keys. If the values differ, try a preference resolution
 unionMergeMaps :: (Ord k, Eq a) => MergePreference -> M.Map k a -> M.Map k a -> Either MergeError (M.Map k a)
@@ -25,6 +26,7 @@ unionMergeMaps prefer mapA mapB = case prefer of
 -- perform the merge even if the attributes are different- is this what we want? Obviously, we need finer-grained merge options.
 unionMergeRelation :: MergePreference -> GraphRefRelationalExpr -> GraphRefRelationalExpr -> GraphRefRelationalExprM GraphRefRelationalExpr
 unionMergeRelation prefer relA relB = do
+  traceShowM ("unionMergeRelation " ++ show prefer)
   let unioned = Union relA relB
       mergeErr = MergeTransactionError StrategyViolatesRelationVariableMergeError
       preferredRelVar =
@@ -40,6 +42,7 @@ unionMergeRelation prefer relA relB = do
 --try to execute unions against the relvars contents -- if a relvar only appears in one context, include it
 unionMergeRelVars :: MergePreference -> RelationVariables -> RelationVariables -> GraphRefRelationalExprM RelationVariables
 unionMergeRelVars prefer relvarsA relvarsB = do
+  traceShowM "unionMergeRelVars"
   let allNames = S.toList (S.union (M.keysSet relvarsA) (M.keysSet relvarsB))
   foldM (\acc name -> do
             mergedRel <- do

@@ -32,6 +32,7 @@ import Data.Monoid
 import Control.Arrow
 import Data.Maybe
 import Data.UUID.V4
+import Debug.Trace
 
 -- | Record a lookup for a specific transaction in the graph.
 data TransactionIdLookup = TransactionIdLookup TransactionId |
@@ -87,7 +88,7 @@ emptyTransactionGraph :: TransactionGraph
 emptyTransactionGraph = TransactionGraph M.empty S.empty
 
 transactionForHead :: HeadName -> TransactionGraph -> Maybe Transaction
-transactionForHead headName graph = M.lookup headName (transactionHeadsForGraph graph)
+transactionForHead headName graph = M.lookup (traceShowId headName) (traceShowId (transactionHeadsForGraph graph))
 
 headList :: TransactionGraph -> [(HeadName, TransactionId)]
 headList graph = map (second transactionId) (M.assocs (transactionHeadsForGraph graph))
@@ -345,7 +346,7 @@ evalROGraphOp discon graph ShowGraph = do
 
 -- | Execute the merge strategy against the transactions, returning a new transaction which can be then added to the transaction graph
 createMergeTransaction :: UTCTime -> TransactionId -> MergeStrategy -> (Transaction, Transaction) -> GraphRefRelationalExprM Transaction
-createMergeTransaction stamp' newId (SelectedBranchMergeStrategy selectedBranch) t2@(trans1, trans2) = do
+createMergeTransaction stamp' newId (SelectedBranchMergeStrategy selectedBranch) t2@(trans1, trans2) = traceShow selectedBranch $ do
   graph <- gfGraph
   selectedTrans <- validateHeadName selectedBranch graph t2
   pure $ addMerkleHash graph $
@@ -365,10 +366,10 @@ createMergeTransaction stamp' newId strat@(UnionPreferMergeStrategy _) t2 =
 
 -- | Returns the correct Transaction for the branch name in the graph and ensures that it is one of the two transaction arguments in the tuple.
 validateHeadName :: HeadName -> TransactionGraph -> (Transaction, Transaction) -> GraphRefRelationalExprM Transaction
-validateHeadName headName graph (t1, t2) =
+validateHeadName headName graph (t1, t2) = traceShow "validateHeadName.transactionForHead" $
   case transactionForHead headName graph of
     Nothing -> throwError (MergeTransactionError SelectedHeadMismatchMergeError)
-    Just trans -> if trans /= t1 && trans /= t2 then 
+    Just trans -> if traceShowId trans /= traceShow ("t1: " ++ show t1) t1 && trans /= traceShow ("t2: " ++ show t2) t2 then 
                     throwError (MergeTransactionError SelectedHeadMismatchMergeError)
                   else
                     pure trans
@@ -576,10 +577,10 @@ autoMergeToHead stamp' (tempBranchTransId, tempCommitTransId, mergeTransId) disc
   (discon'', graph'') <- evalGraphOp stamp' tempCommitTransId discon' graph' Commit
  
   --jump to merge head
-  (discon''', graph''') <- evalGraphOp stamp' tempBranchTransId discon'' graph'' (JumpToHead mergeToHeadName)
+  (discon''', graph''') <- traceShow "jump to head" $ evalGraphOp stamp' tempBranchTransId discon'' graph'' (JumpToHead mergeToHeadName)
   
   --create the merge
-  (discon'''', graph'''') <- evalGraphOp stamp' mergeTransId discon''' graph''' (MergeTransactions strat tempBranchName mergeToHeadName)
+  (discon'''', graph'''') <- traceShow ("evalGraphOp MergeTransactions " ++ show strat ++ " " ++ T.unpack tempBranchName ++ T.unpack mergeToHeadName) $ evalGraphOp stamp' mergeTransId discon''' graph''' (MergeTransactions strat tempBranchName mergeToHeadName)
   
   --delete the temp branch
   (discon''''', graph''''') <- evalGraphOp stamp' tempBranchTransId discon'''' graph'''' (DeleteBranch tempBranchName)
