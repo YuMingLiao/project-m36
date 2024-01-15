@@ -88,7 +88,7 @@ emptyTransactionGraph :: TransactionGraph
 emptyTransactionGraph = TransactionGraph M.empty S.empty
 
 transactionForHead :: HeadName -> TransactionGraph -> Maybe Transaction
-transactionForHead headName graph = M.lookup (traceShowId headName) (traceShowId (transactionHeadsForGraph graph))
+transactionForHead headName graph = M.lookup headName (transactionHeadsForGraph graph)
 
 headList :: TransactionGraph -> [(HeadName, TransactionId)]
 headList graph = map (second transactionId) (M.assocs (transactionHeadsForGraph graph))

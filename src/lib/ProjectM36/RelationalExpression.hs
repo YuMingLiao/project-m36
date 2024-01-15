@@ -1157,7 +1157,7 @@ transactionForId tid graph
   | tid == U.nil =
     Left RootTransactionTraversalError
   | S.null matchingTrans =
-    Left $ NoSuchTransactionError tid
+    Left $ NoSuchTransactionError tid 
   | otherwise =
     Right $ head (S.toList matchingTrans)
   where
