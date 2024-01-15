@@ -32,7 +32,8 @@ import Data.Monoid
 import Control.Arrow
 import Data.Maybe
 import Data.UUID.V4
-import Debug.Trace
+import Graph.Trace (TraceDeep, trace, traceM)
+import Debug.Trace hiding (traceM)
 
 -- | Record a lookup for a specific transaction in the graph.
 data TransactionIdLookup = TransactionIdLookup TransactionId |
@@ -567,8 +568,9 @@ backtrackGraph graph currentTid btrack@(TransactionStampHeadBacktrack stamp') = 
     
 -- | Create a temporary branch for commit, merge the result to head, delete the temporary branch. This is useful to atomically commit a transaction, avoiding a TransactionIsNotHeadError but trading it for a potential MergeError.
 --this is not a GraphOp because it combines multiple graph operations
-autoMergeToHead :: UTCTime -> (TransactionId, TransactionId, TransactionId) -> DisconnectedTransaction -> HeadName -> MergeStrategy -> TransactionGraph -> Either RelationalError (DisconnectedTransaction, TransactionGraph)
+autoMergeToHead :: TraceDeep => UTCTime -> (TransactionId, TransactionId, TransactionId) -> DisconnectedTransaction -> HeadName -> MergeStrategy -> TransactionGraph -> Either RelationalError (DisconnectedTransaction, TransactionGraph)
 autoMergeToHead stamp' (tempBranchTransId, tempCommitTransId, mergeTransId) discon mergeToHeadName strat graph = do
+  traceM "In autoMergeHead"
   let tempBranchName = "mergebranch_" <> U.toText tempBranchTransId
   --create the temp branch
   (discon', graph') <- evalGraphOp stamp' tempBranchTransId discon graph (Branch tempBranchName)
