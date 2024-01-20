@@ -33,6 +33,8 @@ import Data.Monoid
 import Control.Arrow
 import Data.Maybe
 import Data.UUID.V4
+import Debug.Trace.FunctionCall
+import StackedDag
 
 -- | Record a lookup for a specific transaction in the graph.
 data TransactionIdLookup = TransactionIdLookup TransactionId |
@@ -373,10 +375,41 @@ validateHeadName headName graph (t1, t2) =
                     throwError (MergeTransactionError SelectedHeadMismatchMergeError)
                   else
                     pure trans
-  
+
+
+customizeArgs :: Rec -> Either RelationalError TransactionGraph
+customizeArgs (R origGraph resultHeads currentTrans' goalTrans traverseSet) = subGraphOfFirstCommonAncestor' origGraph resultHeads currentTrans' goalTrans traverseSet
+
+data Rec = R TransactionGraph TransactionHeads Transaction Transaction (S.Set Transaction)
+
+instance Show Rec where
+  show (R origGraph resultHeads currentTrans' goalTrans traverseSet) = 
+    let 
+      headids = M.elems $ M.map transactionId resultHeads
+      currentid = transactionId currentTrans'
+      goalid = transactionId goalTrans
+      ids = S.toList (transactionIdsForGraph origGraph)
+      labels = mkLabels $ map (\x -> (x, label x)) ids 
+      edgeForTransaction (Transaction tid info _) = (tid, NE.toList (parents info)) 
+      edges = mkEdges (map edgeForTransaction (S.toList (transactionsForGraph origGraph)))
+      label x = take 6 (show x) 
+        |> \s -> if x `elem` headids then s ++ "_" ++ "Head" else s
+        |> \s -> if x == currentid then s ++ "_cur" else s
+        |> \s -> if x == goalid then s ++ "_goal" else s
+        |> \s -> if x `elem` (S.toList (S.map transactionId traverseSet)) then s ++ "_trvsd" else s
+    in
+    "\n\n" ++ edgesToText labels edges ++ "\n" 
+
+
+(|>) :: a -> (a -> b) -> b
+(|>) v f = f v
+infixl 5 |>
+
 -- Algorithm: start at one transaction and work backwards up the parents. If there is a node we have not yet visited as a child, then walk that up to its head. If that branch contains the goal transaction, then we have completed a valid subgraph traversal. The subgraph must also include any transactions which are referenced by other transactions.
-subGraphOfFirstCommonAncestor :: TransactionGraph -> TransactionHeads -> Transaction -> Transaction -> S.Set Transaction -> Either RelationalError TransactionGraph
-subGraphOfFirstCommonAncestor origGraph resultHeads currentTrans' goalTrans traverseSet = do
+subGraphOfFirstCommonAncestor, subGraphOfFirstCommonAncestor' :: TransactionGraph -> TransactionHeads -> Transaction -> Transaction -> S.Set Transaction -> Either RelationalError TransactionGraph
+subGraphOfFirstCommonAncestor origGraph resultHeads currentTrans' goalTrans traverseSet = 
+  (traceFunction "subGraphOfFirstCommonAncestor" customizeArgs) (R origGraph resultHeads currentTrans' goalTrans traverseSet)  
+subGraphOfFirstCommonAncestor' origGraph resultHeads currentTrans' goalTrans traverseSet = do
   let currentid = transactionId currentTrans'
       goalid = transactionId goalTrans
   if currentTrans' == goalTrans then

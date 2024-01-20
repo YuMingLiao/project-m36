@@ -26,6 +26,7 @@ import Data.ByteString (ByteString)
 import qualified Data.List.NonEmpty as NE
 import Data.Vector.Instances ()
 import Data.Scientific
+import StackedDag
 
 type StringType = Text
 
@@ -448,6 +449,16 @@ type TransactionHeads = M.Map HeadName Transaction
 data TransactionGraph = TransactionGraph TransactionHeads (S.Set Transaction)
   deriving Generic
 
+instance Show TransactionGraph where
+  show graph@(TransactionGraph _ ts) = 
+    let 
+      ids = S.toList (transactionIdsForGraph graph)
+      labels = mkLabels $ map (\x -> (x, take 6 (show x))) ids 
+      edgeForTransaction (Transaction tid info _) = (tid, NE.toList (parents info)) 
+      edges = mkEdges (map edgeForTransaction (S.toList ts))
+    in
+    "\n" ++ edgesToText labels edges ++ "\n" 
+
 transactionHeadsForGraph :: TransactionGraph -> TransactionHeads
 transactionHeadsForGraph (TransactionGraph hs _) = hs
 
@@ -472,7 +483,9 @@ type TransactionId = UUID
 
 data Transaction = Transaction TransactionId TransactionInfo Schemas
   deriving Generic
-                            
+
+instance Show Transaction where
+  show (Transaction tid _ _) = take 6 (show tid)
 -- | The disconnected transaction represents an in-progress workspace used by sessions before changes are committed. This is similar to git's "index". After a transaction is committed, it is "connected" in the transaction graph and can no longer be modified.
 data DisconnectedTransaction = DisconnectedTransaction TransactionId Schemas DirtyFlag
 --the database context expression represents a difference between the disconnected transaction and its immutable parent transaction- is this diff expr used at all?
