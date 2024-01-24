@@ -23,3 +23,5 @@ juyter/dist
 project-m36.nix
 stack.yaml
 release.nix
+src/bin/default.nix
+src/lib/default.nix
