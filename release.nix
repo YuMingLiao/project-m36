@@ -4,6 +4,8 @@
 }:
 let
   doJailbreak = pkgs.haskell.lib.doJailbreak;
+  dontCheck = pkgs.haskell.lib.dontCheck;
+  dontHaddock = pkgs.haskell.lib.dontHaddock;
   needsCocoa = drv:
     if pkgs.stdenv.isDarwin
     then drv.overrideDerivation (old:
@@ -13,6 +15,16 @@ let
 
   haskellPackages = pkgs.haskell.packages.${compiler}.override {
     overrides = self: super: {
+      mkDerivation = drv:
+        super.mkDerivation (drv // {
+          #to all haskell packages.
+          doCheck = false;
+          doHaddock = false;
+          enableLibraryProfiling = false; 
+          enableExecutableProfiling = false;
+          #configureFlags = [ "--constraint=text==2.0.2" ];
+        });
+
       curryer-rpc = self.callHackageDirect {
                       pkg = "curryer-rpc";
 		      ver = "0.3.2";
@@ -52,7 +64,7 @@ let
   	      sha256 = "sha256-cnTevB2qoEBMmGbqypQwJzPVF6z3cOXADbWF8OKQGAo=";	      
       } {};
     
-      project-m36 = ((self.callCabal2nixWithOptions "project-m36" ./. "-f-haskell-scripting" {}));
+      project-m36 = dontCheck (dontHaddock ((self.callCabal2nixWithOptions "project-m36" ./. "-f-haskell-scripting" {})));
     };
   };
 in
