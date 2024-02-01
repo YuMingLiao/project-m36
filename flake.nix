@@ -3,50 +3,71 @@
 
   outputs = { self, nixpkgs }:
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      overlay = final: prev: {
-        # `nix flake show` and `nix flake check` won't work because of
-        # IFD (https://nixos.wiki/wiki/Import_From_Derivation).
-        # Might be possible to use in the near future, check this out:
-        # https://github.com/cdepillabout/cabal2nixWithoutIFD
-        mkDerivation = prev.mkDerivation // {
-          doCheck = false;
-          doHaddock = false;
-          enableLibraryProfiling = false;
-          enableExecutableProfiling = false;
-        };
-        project-m36 = final.callCabal2nix "project-m36" ./. { };
+      config = {
+        allowBroken = true;
+        allowAliases = false;
       };
+      pkgs =
+        nixpkgs.legacyPackages.x86_64-linux.extend (f: p: { inherit config; });
+      overlay = with pkgs.haskell.lib;
+        with pkgs.lib.fileset;
+        final: prev: {
+          # `nix flake show` and `nix flake check` won't work because of
+          # IFD (https://nixos.wiki/wiki/Import_From_Derivation).
+          # Might be possible to use in the near future, check this out:
+          # https://github.com/cdepillabout/cabal2nixWithoutIFD
+          mkDerivation = drv:
+            prev.mkDerivation (drv // {
+              # doCheck = false;
+              # doHaddock = false;
+              # enableLibraryProfiling = false;
+              # enableExecutableProfiling = false;
+            });
+          project-m36 = let
+            source = toSource {
+              root = ./.;
+              fileset = ./.git; # so that specific rev won't get rebuild due to unstaged files change.
+            };
+          in final.callCabal2nix "project-m36" source { };
+          barbies-th = doJailbreak prev.barbies-th;
+          curryer-rpc = final.callHackageDirect {
+            pkg = "curryer-rpc";
+            ver = "0.3.5";
+            sha256 = "sha256-7mEJOBKzA2rTnLxZme8E6zFv0VkiXBo5L/jUJSNPaNE=";
+          } { };
+          streamly = final.callHackageDirect {
+            pkg = "streamly";
+            ver = "0.9.0";
+            sha256 = "sha256-eOxVb8qQjZDo1+S7CStqYSExOg2QHWkMY+zlOYqwZak=";
+          } { };
+          streamly-core = final.callHackageDirect {
+            pkg = "streamly-core";
+            ver = "0.1.0";
+            sha256 = "sha256-hoSV6Q2+X5a7hFnJAArqNPjcMaCVyX9Vz4FcxeJ+jgI=";
+          } { };
+          streamly-bytestring = final.callHackageDirect {
+            pkg = "streamly-bytestring";
+            ver = "0.2.1";
+            sha256 = "sha256-EcH6qq4nRjea3xQ66Zlqgjjg7lF/grkKJI0+tTO4B84=";
+          } { };
+
+        };
 
       myHaskellPackages = pkgs.haskellPackages.extend overlay;
-    in
-    {
+    in {
       defaultPackage.x86_64-linux = myHaskellPackages.project-m36;
 
-      # Define what your shell using `nix develop` should comprise of 
-      devShells = myHaskellPackages.shellFor {
-          packages = p: [
-            # If this is not specified, `cabal build` in devShell will not
-            # be able to utilise the derivation built using callCabal2nix.
-            # In such a case `cabal build` will try to build the pacakge
-            # from scratch, including downloading dependencies. It will 
-            # eventually fail because it can't find `zlib`.
-            p.project-m36
-          ];
-          buildInputs = with myHaskellPackages; [
-            cabal-install
-          ];
-        };
-      };
-      # Define apps that is triggered by `nix run` command. For example,
-      # `nix run .#postgres` will run the script for postgres below
-      apps = forAllSystems (system: {
-        postgres =
-          {
-            # `type` and `program` are required attributes.
-            # The type attribute determines how the program should be executed, For example, "shell" for a shell script,
-            # "python" for a Python script, or "app" for an executable.
-            # `program` denotes the path of the executable to run
+    };
+}
+# Define apps that is triggered by `nix run` command. For example,
+# `nix run .#postgres` will run the script for postgres below
+#      apps = forAllSystems (system: {
+#        postgres =
+#          {
+# `type` and `program` are required attributes.
+# The type attribute determines how the program should be executed, For example, "shell" for a shell script,
+# "python" for a Python script, or "app" for an executable.
+# `program` denotes the path of the executable to run
 #            type = "app";
 #            program =
 #              let
@@ -109,5 +130,3 @@
 #        };
 #      });
 
-    };
-}
