@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE RankNTypes #-}
 module ProjectM36.DatabaseContext where
 import ProjectM36.Base
@@ -7,6 +8,7 @@ import qualified Data.HashSet as HS
 import ProjectM36.DataTypes.Basic
 import ProjectM36.AtomFunctions.Basic
 import ProjectM36.Relation
+import Graph.Trace
 import ProjectM36.DatabaseContextFunction
 
 empty :: DatabaseContext

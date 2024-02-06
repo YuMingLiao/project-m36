@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DataTypes.NonEmptyList where
 import ProjectM36.Base
 import qualified Data.Map as M
 import qualified Data.HashSet as HS
 import ProjectM36.AtomFunctionError
+import Graph.Trace
 import ProjectM36.DataTypes.List
 
 nonEmptyListAtomType :: AtomType -> AtomType

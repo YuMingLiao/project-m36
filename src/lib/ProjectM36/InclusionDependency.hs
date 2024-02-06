@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.InclusionDependency where
 import ProjectM36.Base
 import ProjectM36.Attribute
 import ProjectM36.Error
 import ProjectM36.Relation
+import Graph.Trace
 import qualified Data.Map as M
 
 inclusionDependenciesAsRelation :: InclusionDependencies -> Either RelationalError Relation

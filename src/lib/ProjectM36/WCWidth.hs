@@ -1,5 +1,7 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.WCWidth where
 import Data.Set.Range
+import Graph.Trace
 import Data.Char
 
 wIDEEASTASIAN :: RangeSet Int

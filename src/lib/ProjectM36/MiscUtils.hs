@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.MiscUtils where
 
 --returns duplicates of a pre-sorted list

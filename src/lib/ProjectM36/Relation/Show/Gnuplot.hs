@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Relation.Show.Gnuplot where
 import ProjectM36.Base
 import ProjectM36.Relation
@@ -12,6 +13,7 @@ import qualified Graphics.Gnuplot.Graph.ThreeDimensional as Graph3D
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Graph.TwoDimensional as Graph2D
 
+import Graph.Trace
 import qualified Graphics.Gnuplot.Advanced as GPA
 
 --this module support plotting relations containing integer attributes with arity 1,2, or 3 only

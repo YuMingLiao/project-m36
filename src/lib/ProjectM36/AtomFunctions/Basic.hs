@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 --atom functions on primitive atom values plus the basic atom functions
 module ProjectM36.AtomFunctions.Basic where
 import ProjectM36.Base
@@ -11,6 +12,7 @@ import ProjectM36.AtomFunctions.Primitive
 import ProjectM36.AtomFunction
 import ProjectM36.DataTypes.List
 import ProjectM36.DataTypes.DateTime
+import Graph.Trace
 import qualified Data.HashSet as HS
 
 basicAtomFunctions :: AtomFunctions

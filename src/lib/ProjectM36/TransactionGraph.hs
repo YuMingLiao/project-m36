@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DeriveGeneric, CPP, FlexibleContexts, DerivingVia #-}
 module ProjectM36.TransactionGraph where
 import ProjectM36.Base
@@ -32,6 +33,7 @@ import Data.Monoid
 #endif
 import Control.Arrow
 import Data.Maybe
+import Graph.Trace
 import Data.UUID.V4
 
 -- | Record a lookup for a specific transaction in the graph.

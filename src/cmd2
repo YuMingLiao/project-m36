@@ -1,0 +1,6 @@
+#!/bin/sh
+#-f field
+#-d delimeter
+cat file4 | awk -F", " '{printf "sed -i \"%s i import Graph.Trace\" %s\n", $2, $1}' | sh
+
+

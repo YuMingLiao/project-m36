@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DefaultSignatures, TypeFamilies, TypeOperators, PolyKinds, FlexibleInstances, ScopedTypeVariables, FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.Atomable where
@@ -20,6 +21,7 @@ import Data.Time.Clock
 import Data.Proxy
 import qualified Data.List.NonEmpty as NE
 import Codec.Winery
+import Graph.Trace
 import Data.UUID
 
 -- | All database values ("atoms") adhere to the 'Atomable' typeclass. This class is derivable allowing new datatypes to be easily marshaling between Haskell values and database values.

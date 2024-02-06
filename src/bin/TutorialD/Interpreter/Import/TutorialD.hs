@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module TutorialD.Interpreter.Import.TutorialD where
 import ProjectM36.Base
 import TutorialD.Interpreter.Import.Base
@@ -14,6 +15,7 @@ import Text.URI (URI)
 import Crypto.Hash.SHA256
 import Data.ByteString.Base16 as B16
 import Network.HTTP.Simple
+import Graph.Trace
 import Network.HTTP.Types
 --import a file containing TutorialD database context expressions via local files or HTTP/HTTPS
 

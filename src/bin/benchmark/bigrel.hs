@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE FlexibleInstances, CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 import ProjectM36.Base
@@ -24,6 +25,7 @@ import Data.Text hiding (map)
 import Data.Time.Clock
 import Data.UUID.V4
 #if __GLASGOW_HASKELL__ < 804
+import Graph.Trace
 import Data.Monoid
 #endif
 

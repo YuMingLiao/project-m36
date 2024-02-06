@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DataTypes.Either where
 import ProjectM36.Base
 import ProjectM36.AtomFunction
 import ProjectM36.AtomFunctionError
 import qualified Data.HashSet as HS
+import Graph.Trace
 import qualified Data.Map as M
        
 eitherAtomType :: AtomType -> AtomType -> AtomType

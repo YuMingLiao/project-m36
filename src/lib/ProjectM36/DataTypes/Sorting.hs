@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DataTypes.Sorting where
+import Graph.Trace
 import ProjectM36.Base
 
 compareAtoms :: Atom -> Atom -> Ordering

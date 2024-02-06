@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 --Transaction Merge Engines
 module ProjectM36.TransactionGraph.Merge where
 import ProjectM36.Base
@@ -8,6 +9,7 @@ import qualified Data.Set as S
 import qualified Data.Map as M
 import qualified ProjectM36.TypeConstructorDef as TCD
 import qualified Data.HashSet as HS
+import Graph.Trace
 import qualified Data.Text as T
 
 data MergePreference = PreferFirst | PreferSecond | PreferNeither

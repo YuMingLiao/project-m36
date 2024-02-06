@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module TutorialD.Interpreter.Export.Base where
 import ProjectM36.Base
 import ProjectM36.Error
 #if __GLASGOW_HASKELL__ < 804
+import Graph.Trace
 import Data.Monoid
 #endif
 

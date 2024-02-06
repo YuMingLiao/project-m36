@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE LambdaCase, CPP #-}
 module ProjectM36.Server.WebSocket where
 -- while the tutd client performs TutorialD parsing on the client, the websocket server will pass tutd to be parsed and executed on the server- otherwise I have to pull in ghcjs as a dependency to allow client-side parsing- that's not appealing because then the frontend is not language-agnostic, but this could change in the future, perhaps by sending different messages over the websocket
@@ -25,6 +26,7 @@ import Data.Functor
 import Data.Either (fromRight)
 
 #if MIN_VERSION_megaparsec(7,0,0)
+import Graph.Trace
 import Data.List.NonEmpty as NE
 #endif
 

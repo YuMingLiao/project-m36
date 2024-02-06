@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 import TutorialD.Interpreter
 import ProjectM36.Base
@@ -13,6 +14,7 @@ import Control.Monad
 import Data.Monoid
 #endif
 import Data.Maybe
+import Graph.Trace
 import qualified Data.Text as T
 
 #if !defined(VERSION_project_m36) 

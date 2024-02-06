@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Transaction where
 import ProjectM36.Base
 import qualified Data.Set as S
 import qualified Data.UUID as U
 import Data.Time.Clock
+import Graph.Trace
 import qualified Data.List.NonEmpty as NE
 
 parentIds :: Transaction -> S.Set TransactionId

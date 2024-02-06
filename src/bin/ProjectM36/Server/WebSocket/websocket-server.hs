@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 
 import Control.Concurrent
@@ -15,6 +16,7 @@ import Network.WebSockets (defaultConnectionOptions)
 import ProjectM36.Server
 import ProjectM36.Server.Config
 import ProjectM36.Server.ParseArgs
+import Graph.Trace
 import ProjectM36.Server.WebSocket
 
 main :: IO ()

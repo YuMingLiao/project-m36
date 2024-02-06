@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE GADTs #-}
 module TutorialD.Interpreter.RODatabaseContextOperator where
 import ProjectM36.Base
@@ -17,6 +18,7 @@ import ProjectM36.Relation.Show.Gnuplot
 import ProjectM36.HashSecurely
 import qualified Data.Map as M
 import Data.Maybe
+import Graph.Trace
 import Data.Functor
 
 --operators which only rely on database context reading

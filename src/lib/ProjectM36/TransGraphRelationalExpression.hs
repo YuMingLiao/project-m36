@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 --really, a better name for this module could be "TransTransactionGraphRelationalExpr", but that name is too long
@@ -9,6 +10,7 @@ import qualified Data.Map as M
 import Control.Monad.Trans.Reader
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Except
+import Graph.Trace
 import Data.Functor.Identity
 
 -- | The TransGraphRelationalExpression is equivalent to a relational expression except that relation variables can reference points in the transaction graph (at previous points in time).

@@ -1,5 +1,7 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DataConstructorDef where
 import ProjectM36.Base as B
+import Graph.Trace
 import qualified Data.Set as S
 
 emptyDataConstructor :: DataConstructorName -> DataConstructorDef

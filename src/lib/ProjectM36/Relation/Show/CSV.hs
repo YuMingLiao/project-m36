@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.Relation.Show.CSV where
 import ProjectM36.Base
@@ -8,6 +9,7 @@ import qualified Data.ByteString.Lazy as BS
 import qualified Data.Vector as V
 import ProjectM36.Error
 import qualified Data.Text.Encoding as TE
+import Graph.Trace
 import ProjectM36.Atom
 
 --spit out error for relations without attributes (since relTrue and relFalse cannot be distinguished then as CSV) and for relations with relation-valued attributes

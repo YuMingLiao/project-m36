@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.TransactionGraph.Types where
+import Graph.Trace
 import ProjectM36.Base
 
 transactions :: TransactionGraph -> S.Set Transaction

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 --cross-platform file locking utilizing POSIX file locking on Unix/Linux and Windows file locking
 --hackage's System.FileLock doesn't support POSIX advisory locks nor locking file based on file descriptors, hence this needless rewrite
@@ -62,6 +63,7 @@ unlockFile winHandle = do
 import qualified System.Posix.IO as P
 import System.Posix.Types
 import System.Posix.Files
+import Graph.Trace
 import System.IO
 
 lockStruct :: P.LockRequest -> P.FileLock

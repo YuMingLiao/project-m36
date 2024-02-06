@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Relation.Show.HTML where
 import ProjectM36.Base
 import ProjectM36.Relation
@@ -10,6 +11,7 @@ import Data.Text (Text, pack)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 #if __GLASGOW_HASKELL__ < 804
+import Graph.Trace
 import Data.Monoid
 #endif
 

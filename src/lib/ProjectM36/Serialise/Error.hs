@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DerivingVia, StandaloneDeriving #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.Serialise.Error where
@@ -5,6 +6,7 @@ import ProjectM36.Error
 import Codec.Winery
 import ProjectM36.Serialise.Base ()
 import ProjectM36.Serialise.AtomFunctionError ()
+import Graph.Trace
 import ProjectM36.Serialise.DatabaseContextFunctionError ()
 
 deriving via WineryVariant RelationalError instance Serialise RelationalError

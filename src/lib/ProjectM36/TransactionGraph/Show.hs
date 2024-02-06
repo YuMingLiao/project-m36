@@ -1,6 +1,8 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.TransactionGraph.Show where
 import ProjectM36.Base
 import ProjectM36.TransactionGraph
+import Graph.Trace
 import qualified Data.Set as S
 
 showTransactionStructure :: Transaction -> TransactionGraph -> String

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 --benchmark test for file handle leaks
 import ProjectM36.Client
@@ -9,6 +10,7 @@ import qualified Data.Text as T
 #if __GLASGOW_HASKELL__ < 804
 import Data.Monoid
 #endif
+import Graph.Trace
 import Control.Monad
 
 data HandlesArgs = HandlesArgs {

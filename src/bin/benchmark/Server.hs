@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DerivingVia, DeriveGeneric #-}
 import ProjectM36.Tupleable
 import ProjectM36.Client
@@ -7,6 +8,7 @@ import Codec.Winery
 import Data.Text (Text)
 import Data.Proxy
 import GHC.Generics
+import Graph.Trace
 import Control.Monad
 
 

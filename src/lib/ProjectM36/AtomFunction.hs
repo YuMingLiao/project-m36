@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module ProjectM36.AtomFunction where
 import ProjectM36.Base
@@ -9,6 +10,7 @@ import ProjectM36.AtomFunctionError
 import ProjectM36.Function
 import qualified ProjectM36.Attribute as A
 import qualified Data.HashSet as HS
+import Graph.Trace
 import qualified Data.Text as T
 
 foldAtomFuncType :: AtomType -> AtomType -> [AtomType]

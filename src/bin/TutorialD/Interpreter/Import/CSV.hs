@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module TutorialD.Interpreter.Import.CSV where
 import TutorialD.Interpreter.Import.Base
@@ -7,6 +8,7 @@ import ProjectM36.Relation.Parse.CSV hiding (quotedString)
 import qualified Data.ByteString.Lazy as BS
 import qualified Data.Text as T
 import TutorialD.Interpreter.Base hiding (try)
+import Graph.Trace
 import Control.Exception
 
 importCSVRelation :: RelVarName -> TypeConstructorMapping -> Attributes -> FilePath -> IO (Either RelationalError DatabaseContextExpr)

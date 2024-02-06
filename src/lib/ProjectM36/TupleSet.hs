@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.TupleSet where
 import ProjectM36.Base
 import ProjectM36.Tuple
@@ -5,6 +6,7 @@ import ProjectM36.Error
 import qualified Data.HashSet as HS
 import qualified Data.Vector as V
 import qualified Control.Parallel.Strategies as P
+import Graph.Trace
 import Data.Either
 
 emptyTupleSet :: RelationTupleSet

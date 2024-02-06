@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Atom where
 import ProjectM36.Base
 import ProjectM36.Error
 import ProjectM36.DataTypes.Interval
 import qualified Data.Text as T
 #if __GLASGOW_HASKELL__ < 804
+import Graph.Trace
 import Data.Monoid
 #endif
 

@@ -1,5 +1,7 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DisconnectedTransaction where
 import ProjectM36.Base
+import Graph.Trace
 import Data.Map
 
 concreteDatabaseContext :: DisconnectedTransaction -> DatabaseContext

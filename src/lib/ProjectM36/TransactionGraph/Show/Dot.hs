@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.TransactionGraph.Show.Dot where
 import ProjectM36.Transaction
 import ProjectM36.Base
 import qualified Data.Text as T
 import qualified Data.Set as S
+import Graph.Trace
 import qualified Data.Map as M
 
 graphAsDot :: TransactionGraph -> String                              

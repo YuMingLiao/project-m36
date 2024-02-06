@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.Client.Json where
 import Data.Aeson
 import ProjectM36.Server.RemoteCallTypes.Json ()
 import ProjectM36.Client
 import ProjectM36.TransactionGraph
+import Graph.Trace
 import Control.Exception (IOException)
 
 instance ToJSON EvaluatedNotification

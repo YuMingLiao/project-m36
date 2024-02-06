@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Server.Config where
+import Graph.Trace
 import ProjectM36.Client
 
 data ServerConfig = ServerConfig { persistenceStrategy :: PersistenceStrategy,

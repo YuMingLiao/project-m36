@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module ProjectM36.Win32Handle where
 import System.Win32.Types
@@ -12,6 +13,7 @@ import GHC.IO.FD (FD(..)) -- A wrapper around an Int32
 import Data.Typeable
 #else
 import GHC.IOBase (Handle(..), Handle__(..))
+import Graph.Trace
 import qualified GHC.IOBase as IOBase (FD) -- Just an Int32
 #endif
 

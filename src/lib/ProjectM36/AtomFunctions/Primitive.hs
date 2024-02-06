@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.AtomFunctions.Primitive where
 import ProjectM36.Base
 import ProjectM36.Relation (relFold, oneTuple)
@@ -10,6 +11,7 @@ import Control.Monad
 import qualified Data.UUID as U
 import qualified Data.Text as T
 import qualified Data.Attoparsec.Text as APT
+import Graph.Trace
 import Data.Scientific
 
 primitiveAtomFunctions :: AtomFunctions

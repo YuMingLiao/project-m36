@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.DataTypes.Interval where
 import ProjectM36.AtomFunctionBody
@@ -8,6 +9,7 @@ import ProjectM36.AtomFunctionError
 import qualified Data.HashSet as HS
 import qualified Data.Map as M
 import Control.Monad (when)
+import Graph.Trace
 import Data.Maybe
 
 type OpenInterval = Bool                     

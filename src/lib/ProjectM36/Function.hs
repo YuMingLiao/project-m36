@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 -- | Module for functionality common between the various Function types (AtomFunction, DatabaseContextFunction).
 module ProjectM36.Function where
 import ProjectM36.Base
 import ProjectM36.Error
 import ProjectM36.Serialise.Base ()
 import ProjectM36.ScriptSession
+import Graph.Trace
 import qualified Data.HashSet as HS
 
 -- for merkle hash                       

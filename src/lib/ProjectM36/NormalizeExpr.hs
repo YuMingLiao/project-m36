@@ -1,7 +1,9 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 -- | Functions to convert all types of expresions into their GraphRef- equivalents.
 module ProjectM36.NormalizeExpr where
 import ProjectM36.Base
 import Control.Monad.Trans.Reader as R
+import Graph.Trace
 import qualified Data.Map as M
 
 --used to process/normalize exprs to their respective graph ref forms

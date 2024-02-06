@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 module ProjectM36.Error where
 import ProjectM36.Base
@@ -10,6 +11,7 @@ import Control.DeepSeq.Generics (genericRnf)
 import GHC.Generics (Generic)
 import qualified Data.Text as T
 import Data.Typeable
+import Graph.Trace
 import Control.Exception
 
 data RelationalError = NoSuchAttributeNamesError (S.Set AttributeName)

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE ForeignFunctionInterface, CPP #-}
 --this module is related to persisting Project:M36 structures to disk and not related to the persistent library
 module ProjectM36.Persist (writeFileSync, 
@@ -41,6 +42,7 @@ import qualified Data.ByteString as BS
 import qualified Data.Text.Encoding as TE
 
 #if defined(mingw32_HOST_OS)
+import Graph.Trace
 import ProjectM36.Win32Handle
 #else
 foreign import ccall unsafe "cDirectoryFsync" cHSDirectoryFsync :: CString -> IO CInt

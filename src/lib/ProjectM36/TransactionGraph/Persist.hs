@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.TransactionGraph.Persist where
 import ProjectM36.Error
 import ProjectM36.Transaction
@@ -32,6 +33,7 @@ import Control.Arrow
 import Data.Time.Clock
 import Data.Text.Read
 import System.FilePath.Glob
+import Graph.Trace
 import Data.Tuple
 
 type LockFileHash = ByteString

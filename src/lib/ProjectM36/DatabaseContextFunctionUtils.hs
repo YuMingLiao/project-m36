@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DatabaseContextFunctionUtils where
 import ProjectM36.RelationalExpression
 import ProjectM36.Base
 import ProjectM36.DatabaseContextFunctionError
 import ProjectM36.Error
+import Graph.Trace
 import ProjectM36.StaticOptimizer
 
 executeDatabaseContextExpr :: DatabaseContextExpr -> TransactionId -> TransactionGraph -> DatabaseContext -> Either DatabaseContextFunctionError DatabaseContext

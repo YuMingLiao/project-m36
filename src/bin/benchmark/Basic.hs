@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 import ProjectM36.Base
 import Criterion.Main
 import qualified ProjectM36.Attribute as A
@@ -14,6 +15,7 @@ import qualified Data.Set as S
 import Data.Monoid
 import System.IO.Temp
 import System.FilePath
+import Graph.Trace
 import System.Directory
 
 {-

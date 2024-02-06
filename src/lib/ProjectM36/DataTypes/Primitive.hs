@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DataTypes.Primitive where
+import Graph.Trace
 import ProjectM36.Base
 
 primitiveTypeConstructorMapping :: TypeConstructorMapping

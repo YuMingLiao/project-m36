@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DeriveGeneric, DerivingVia #-}
 {- A dataframe is a strongly-typed, ordered list of named tuples. A dataframe differs from a relation in that its tuples are ordered.-}
 module ProjectM36.DataFrame where
@@ -19,6 +20,7 @@ import qualified Data.Text as T
 import Control.Arrow
 import Control.Monad (unless)
 #if __GLASGOW_HASKELL__ < 804
+import Graph.Trace
 import Data.Monoid
 #endif
 

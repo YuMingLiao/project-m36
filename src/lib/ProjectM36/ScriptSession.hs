@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE UnboxedTuples, KindSignatures, DataKinds #-}
 #ifdef PM36_HASKELL_SCRIPTING
 {-# LANGUAGE MagicHash #-}
@@ -68,6 +69,7 @@ import DynFlags (projectVersion, PkgConfRef(PkgConfFile), TrustFlag(TrustPackage
 
 import GHC.Exts (addrToAny#)
 import GHC.Ptr (Ptr(..))
+import Graph.Trace
 import GHCi.ObjLink (initObjLinker, ShouldRetainCAFs(RetainCAFs), resolveObjs, lookupSymbol, loadDLL, loadObj)
 #endif
 -- endif for SCRIPTING FLAG

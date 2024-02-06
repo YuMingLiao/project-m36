@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 -- wraps up primitives plus other basic data types
 module ProjectM36.DataTypes.Basic where
 import ProjectM36.DataTypes.Primitive
@@ -6,6 +7,7 @@ import ProjectM36.DataTypes.Maybe
 import ProjectM36.DataTypes.List
 import ProjectM36.DataTypes.NonEmptyList
 import ProjectM36.DataTypes.Interval
+import Graph.Trace
 import ProjectM36.Base
 
 basicTypeConstructorMapping :: TypeConstructorMapping

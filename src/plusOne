@@ -1,0 +1,4 @@
+#!/bin/sh
+oldnum='cut -f1 $1'  
+newnum='expr $oldnum + 1'
+sed -i "s/$oldnum\$/$newnum/g" $1

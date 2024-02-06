@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE GADTs,ExistentialQuantification #-}
 module ProjectM36.Relation where
 import qualified Data.Set as S
@@ -15,6 +16,7 @@ import qualified ProjectM36.DataConstructorDef as DCD
 import qualified Data.Text as T
 import Data.Either (isRight)
 import System.Random.Shuffle
+import Graph.Trace
 import Control.Monad.Random
 
 attributes :: Relation -> Attributes

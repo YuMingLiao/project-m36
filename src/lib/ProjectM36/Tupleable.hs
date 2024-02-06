@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DefaultSignatures    #-}
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE FlexibleInstances    #-}
@@ -47,6 +48,7 @@ import           ProjectM36.TupleSet
 import qualified Data.Set as S
 
 {-import Data.Binary
+import Graph.Trace
 import Control.DeepSeq
 
 data Test1T = Test1C {

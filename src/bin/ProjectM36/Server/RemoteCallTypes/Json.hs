@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 --create a bunch of orphan instances for use with the websocket server
 {-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
@@ -18,6 +19,7 @@ import Data.ByteString.Base64 as B64
 import Data.Text.Encoding
 import Data.Time.Calendar
 import Data.UUID
+import Graph.Trace
 import Data.Scientific
 
 instance ToJSON RelationalExpr

@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Transaction where
+import Graph.Trace
 import ProjectM36.Base
 
 uid :: Transaction -> TransactionId

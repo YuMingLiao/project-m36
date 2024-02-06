@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.Attribute where
 import ProjectM36.Base
@@ -8,6 +9,7 @@ import qualified Data.Vector as V
 import qualified Data.Hashable as Hash
 import qualified Data.HashSet as HS
 import qualified Data.Map as M
+import Graph.Trace
 import Data.Either
 
 arity :: Attributes -> Int

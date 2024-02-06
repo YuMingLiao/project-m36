@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE GADTs #-}
 module TutorialD.Interpreter.TransactionGraphOperator where
 import TutorialD.Interpreter.Base
@@ -5,6 +6,7 @@ import ProjectM36.TransactionGraph hiding (autoMergeToHead)
 import ProjectM36.Client as C
 import ProjectM36.Base
 import ProjectM36.Relation (relationTrue)
+import Graph.Trace
 import Data.Functor
 
 data ConvenienceTransactionGraphOperator = AutoMergeToHead MergeStrategy HeadName

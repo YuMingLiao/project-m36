@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 -- | A unified class for walking the database structure to produce a hash used for Merkle trees and validation.
 {-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving, RankNTypes, ExistentialQuantification, BangPatterns #-}
 module ProjectM36.HashSecurely where
@@ -24,6 +25,7 @@ import qualified Data.Vector as V
 import qualified Data.Set as S
 import Data.Time.Calendar
 import Data.Time.Clock
+import Graph.Trace
 import Codec.Winery (Serialise)
 
 newtype SecureHash = SecureHash { _unSecureHash :: B.ByteString }

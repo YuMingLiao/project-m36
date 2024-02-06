@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
@@ -23,6 +24,7 @@ import qualified Data.Text as T
 import qualified Data.Map as M
 import qualified Data.Set as S
 import GHC.Exts (IsList(..))
+import Graph.Trace
 import Data.Convertible
 
 default (Text)

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.AtomType where
 import ProjectM36.Base
 import qualified ProjectM36.TypeConstructorDef as TCD
@@ -15,6 +16,7 @@ import Data.Maybe (isJust)
 import Data.Either (rights, lefts)
 import Control.Monad.Writer
 import qualified Data.Map as M
+import Graph.Trace
 import qualified Data.Text as T
 
 findDataConstructor :: DataConstructorName -> TypeConstructorMapping -> Maybe (TypeConstructorDef, DataConstructorDef)

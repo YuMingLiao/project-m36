@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module TutorialD.Interpreter.TransGraphRelationalOperator where
@@ -9,6 +10,7 @@ import qualified ProjectM36.Client as C
 import TutorialD.Interpreter.Base
 import TutorialD.Interpreter.RelationalExpr
 
+import Graph.Trace
 import qualified Data.Text as T
 
 instance RelationalMarkerExpr TransactionIdLookup where

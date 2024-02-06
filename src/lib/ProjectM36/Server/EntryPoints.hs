@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE MonoLocalBinds #-}
 module ProjectM36.Server.EntryPoints where
 import ProjectM36.Base hiding (inclusionDependencies)
@@ -9,6 +10,7 @@ import Control.Concurrent (threadDelay)
 import Network.RPC.Curryer.Server 
 import System.Timeout hiding (Timeout)
 import Network.Socket
+import Graph.Trace
 import Control.Exception
 
 timeoutOrDie :: Maybe Timeout -> IO a -> IO (Maybe a)

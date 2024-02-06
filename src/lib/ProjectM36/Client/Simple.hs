@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -- | A simplified client interface for Project:M36 database access.
 module ProjectM36.Client.Simple (
@@ -34,6 +35,7 @@ import Control.Exception.Base
 import Control.Monad.Reader
 import ProjectM36.Base
 import qualified ProjectM36.Client as C
+import Graph.Trace
 import ProjectM36.Error
 
 type DbConn = (C.SessionId, C.Connection)

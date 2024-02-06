@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DeriveGeneric, LambdaCase, DerivingVia, FlexibleInstances #-}
 module ProjectM36.IsomorphicSchema where
 import ProjectM36.Base
@@ -16,6 +17,7 @@ import qualified Data.Vector as V
 import qualified ProjectM36.Attribute as A
 import ProjectM36.AtomType
 #if __GLASGOW_HASKELL__ < 804
+import Graph.Trace
 import Data.Monoid
 #endif
 

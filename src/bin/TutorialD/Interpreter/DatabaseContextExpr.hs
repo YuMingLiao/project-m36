@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module TutorialD.Interpreter.DatabaseContextExpr where
 import ProjectM36.Base
@@ -15,6 +16,7 @@ import ProjectM36.FunctionalDependency
 #if __GLASGOW_HASKELL__ < 804
 import Data.Monoid
 #endif
+import Graph.Trace
 import Data.Functor
 
 --parsers which create "database expressions" which modify the database context (such as relvar assignment)

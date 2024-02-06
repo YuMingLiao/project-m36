@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module TutorialD.Interpreter.SchemaOperator where
 import Text.Megaparsec
 import ProjectM36.Base
@@ -5,6 +6,7 @@ import ProjectM36.IsomorphicSchema
 import ProjectM36.Session
 import ProjectM36.Client
 import TutorialD.Interpreter.RelationalExpr
+import Graph.Trace
 import TutorialD.Interpreter.Base
 
 data SchemaOperator = ModifySchemaExpr SchemaExpr |

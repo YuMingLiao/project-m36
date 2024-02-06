@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE StandaloneDeriving, DerivingVia, TypeApplications, TypeSynonymInstances, ScopedTypeVariables #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 --Serialise instances for ProjectM36.Base data types- orphan instance city
@@ -18,6 +19,7 @@ import qualified Data.Vector as V
 import Data.Time.Calendar (Day,toGregorian,fromGregorian)
 #if MIN_VERSION_winery(1,4,0)
 #else
+import Graph.Trace
 import qualified Data.List.NonEmpty as NE
 #endif
 

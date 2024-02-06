@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DeriveGeneric, DerivingVia, CPP #-}
 module ProjectM36.Server.RemoteCallTypes where
 import ProjectM36.Base
@@ -9,6 +10,7 @@ import ProjectM36.Session
 import ProjectM36.Serialise.DataFrame ()
 import ProjectM36.Serialise.IsomorphicSchema ()
 import GHC.Generics
+import Graph.Trace
 import Codec.Winery
 
 #define RPCData(typeName) deriving Generic \

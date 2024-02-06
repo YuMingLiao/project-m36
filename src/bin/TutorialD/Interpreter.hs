@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE GADTs, LambdaCase, CPP #-}
 module TutorialD.Interpreter where
 import TutorialD.Interpreter.Base
@@ -34,6 +35,7 @@ import Data.Monoid
 import Data.List (isPrefixOf)
 import Control.Exception
 import System.Exit
+import Graph.Trace
 import Data.Either (fromRight)
 
 {-

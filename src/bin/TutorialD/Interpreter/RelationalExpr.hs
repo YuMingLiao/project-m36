@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module TutorialD.Interpreter.RelationalExpr where
 import Text.Megaparsec
@@ -13,6 +14,7 @@ import qualified Data.Text as T
 import qualified Data.Set as S
 import qualified Data.Map as M
 import Data.List (sort)
+import Graph.Trace
 import ProjectM36.MiscUtils
 
 --used in projection

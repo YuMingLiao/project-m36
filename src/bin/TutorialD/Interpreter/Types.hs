@@ -1,7 +1,9 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 --parse type and data constructors
 module TutorialD.Interpreter.Types where
 import ProjectM36.Base
 import Text.Megaparsec
+import Graph.Trace
 import TutorialD.Interpreter.Base
 
 class RelationalMarkerExpr a where

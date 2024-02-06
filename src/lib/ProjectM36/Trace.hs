@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Trace where
+import Graph.Trace
 import Debug.Trace (traceEventIO)
 -- utility module to enable easy enabling/disabling of eventlog data
 

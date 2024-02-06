@@ -1,5 +1,7 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.FunctionalDependency where
 import ProjectM36.Base 
+import Graph.Trace
 import qualified Data.Set as S
 
 data FunctionalDependency = FunctionalDependency AttributeNames AttributeNames RelationalExpr

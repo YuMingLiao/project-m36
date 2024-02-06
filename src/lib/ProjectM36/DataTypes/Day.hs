@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DataTypes.Day where
 import ProjectM36.Base
 import ProjectM36.AtomFunctionBody
 import ProjectM36.AtomFunctionError
 import qualified Data.HashSet as HS
+import Graph.Trace
 import Data.Time.Calendar
 
 

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 -- confirm that the filesystem type is a journaled FS type expected by Project:M36
 -- use statfs on Linux and macOS and GetVolumeInformation on Windows
@@ -65,6 +66,7 @@ fsTypeSupportsJournaling path =
 import Foreign
 import Foreign.C.Error
 import Foreign.C.String
+import Graph.Trace
 import Foreign.C.Types
 
 #include "MachDeps.h"

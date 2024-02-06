@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.WithNameExpr where
+import Graph.Trace
 import ProjectM36.Base
 
 -- substitute all instances of With-based macros to remove macro context

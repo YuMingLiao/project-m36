@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DeriveGeneric, CPP #-}
 module TutorialD.Interpreter.Base (
   module TutorialD.Interpreter.Base,
@@ -43,6 +44,7 @@ import Control.Monad.Random
 import Data.List.NonEmpty as NE
 import Data.Time.Clock
 import Data.Time.Format
+import Graph.Trace
 import Data.Char
 
 #if !MIN_VERSION_megaparsec(7,0,0)

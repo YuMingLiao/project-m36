@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module ProjectM36.DatabaseContextFunction where
 --implements functions which operate as: [Atom] -> DatabaseContextExpr -> Either RelationalError DatabaseContextExpr
@@ -11,6 +12,7 @@ import ProjectM36.Function
 import qualified Data.HashSet as HS
 import qualified Data.Map as M
 import qualified Data.Text as T
+import Graph.Trace
 import Data.Maybe (isJust)
 
 externalDatabaseContextFunction :: DatabaseContextFunctionBodyType -> DatabaseContextFunctionBody

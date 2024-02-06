@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -28,6 +29,7 @@ import Codec.Winery
 #ifdef PM36_HASKELL_SCRIPTING
 import GHC
 import Control.Exception
+import Graph.Trace
 import GHC.Paths
 #endif
 

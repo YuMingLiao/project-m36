@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 --writes Relation to a String suitable for terminal output
 module ProjectM36.Relation.Show.Term where
 import ProjectM36.Base
@@ -14,6 +15,7 @@ import qualified Data.Text.Encoding as TE
 #if __GLASGOW_HASKELL__ < 804
 import Data.Monoid
 #endif
+import Graph.Trace
 import ProjectM36.WCWidth --guess the width that the character will appear as in the terminal
 
 boxV :: StringType

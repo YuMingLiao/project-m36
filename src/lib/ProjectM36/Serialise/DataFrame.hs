@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DerivingVia, StandaloneDeriving #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module ProjectM36.Serialise.DataFrame where
 import Codec.Winery
 import ProjectM36.DataFrame
+import Graph.Trace
 import ProjectM36.Serialise.Base ()
   
 deriving via WineryVariant AttributeOrderExpr instance Serialise AttributeOrderExpr

@@ -1,6 +1,8 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.GraphRefRelationalExpr where
 --evaluate relational expressions across the entire transaction graph to support cross-transaction referencing
 import ProjectM36.Base
+import Graph.Trace
 import qualified Data.Set as S
 
 data SingularTransactionRef = SingularTransactionRef GraphRefTransactionMarker |

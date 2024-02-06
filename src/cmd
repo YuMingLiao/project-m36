@@ -1,0 +1,3 @@
+#!/bin/sh
+lineNum=$(sed -n '/^import /=' $1 | tail -n 1)
+printf "$1, $lineNum\n"

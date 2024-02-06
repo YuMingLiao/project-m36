@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.DDLType where
 import ProjectM36.HashSecurely
 import ProjectM36.Base
@@ -9,6 +10,7 @@ import ProjectM36.Relation
 import ProjectM36.InclusionDependency
 import ProjectM36.AtomFunction
 import ProjectM36.DatabaseContextFunction
+import Graph.Trace
 import ProjectM36.IsomorphicSchema
 
 -- | Return a hash of just DDL-specific (schema) attributes. This is useful for determining if a client has the appropriate updates needed to work with the current schema.

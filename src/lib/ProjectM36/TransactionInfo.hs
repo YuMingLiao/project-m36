@@ -1,6 +1,8 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.TransactionInfo where
 import ProjectM36.Base
 import Data.Time.Clock
+import Graph.Trace
 import qualified Data.List.NonEmpty as NE
 
 -- | Create a TransactionInfo with just one parent transaction ID.

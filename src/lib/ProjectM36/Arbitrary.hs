@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE ExistentialQuantification,FlexibleInstances,OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -18,6 +19,7 @@ import qualified Data.ByteString.Char8 as B
 import Data.Time
 import Control.Monad.Reader
 import Data.UUID
+import Graph.Trace
 import Data.Scientific
 
 arbitrary' :: AtomType -> WithTCMap Gen (Either RelationalError Atom)

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module ProjectM36.Server where
 
@@ -14,6 +15,7 @@ import System.Directory (doesDirectoryExist)
 import Network.RPC.Curryer.Server
 import Network.Socket
 import qualified StmContainers.Map as StmMap
+import Graph.Trace
 import Control.Concurrent.STM
 
 type TestMode = Bool

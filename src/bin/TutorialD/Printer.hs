@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -14,6 +15,7 @@ import Data.Time.Calendar
 import Data.Time.Clock.POSIX
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.Text.Encoding as TE
+import Graph.Trace
 import Data.UUID hiding (null)
 
 instance Pretty Atom where

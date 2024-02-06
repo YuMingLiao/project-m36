@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 import Criterion.Main
 import ProjectM36.Relation
 import ProjectM36.Base
 import ProjectM36.Error
 import qualified ProjectM36.Attribute as A
 import qualified Data.Text as T
+import Graph.Trace
 import qualified Data.Vector as V
 
 -- returns a relation with tupleCount tuples with a set of integer attributes attributesCount long

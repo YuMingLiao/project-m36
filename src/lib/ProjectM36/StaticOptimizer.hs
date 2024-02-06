@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 module ProjectM36.StaticOptimizer where
@@ -18,6 +19,7 @@ import Control.Monad.Except
 import Control.Monad.Trans.Except
 import Data.Functor.Identity
 import qualified Data.Map as M
+import Graph.Trace
 import qualified Data.Set as S
 
 -- the static optimizer performs optimizations which need not take any specific-relation statistics into account

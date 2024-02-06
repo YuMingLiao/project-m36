@@ -1,7 +1,9 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE CPP #-}
 module TutorialD.Interpreter.InformationOperator where
 import Data.Text
 import Text.Megaparsec
+import Graph.Trace
 import TutorialD.Interpreter.Base
 -- older versions of stack fail to
 #if !defined(VERSION_project_m36) 

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE KindSignatures #-}
@@ -58,6 +59,7 @@ import qualified Data.Text            as T
 import           Data.Text.Manipulate
 import           GHC.TypeLits
 import           GHC.Generics         (Generic, Rep)
+import Graph.Trace
 import           ProjectM36.Tupleable
 
 

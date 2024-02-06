@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Session where
 import ProjectM36.Base
 import Data.UUID
 import qualified Data.Map as M
 import ProjectM36.Error
+import Graph.Trace
 import qualified ProjectM36.DisconnectedTransaction as Discon
 
 type SessionId = UUID

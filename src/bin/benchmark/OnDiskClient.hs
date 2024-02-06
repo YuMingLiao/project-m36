@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE DerivingVia, DeriveGeneric, DeriveAnyClass, TypeApplications #-}
 -- create a simple, on-disk database of ~20 MB so that we can get a heap profile
 import ProjectM36.Client
@@ -9,6 +10,7 @@ import GHC.Generics
 import Control.DeepSeq
 import ProjectM36.Tupleable
 import Data.Time.Calendar
+import Graph.Trace
 import Data.Proxy
 
 data WeatherReading =

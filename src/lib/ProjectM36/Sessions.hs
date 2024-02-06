@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE PackageImports #-}
 module ProjectM36.Sessions where
 import Control.Concurrent.STM
@@ -18,6 +19,7 @@ import qualified Data.UUID as U
 import qualified Control.Foldl as Foldl
 import qualified DeferredFolds.UnfoldlM as UF
 #else
+import Graph.Trace
 import "list-t" ListT
 #endif
 

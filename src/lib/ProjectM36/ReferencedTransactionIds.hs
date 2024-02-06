@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE FlexibleInstances #-}
 module ProjectM36.ReferencedTransactionIds where
 import ProjectM36.Base
@@ -6,6 +7,7 @@ import qualified ProjectM36.Transaction as T
 import ProjectM36.RelationalExpression
 import qualified Data.Map as M
 import qualified Data.Set as S
+import Graph.Trace
 import Control.Monad (foldM)
 
 type TransactionIds = S.Set TransactionId

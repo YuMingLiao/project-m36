@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances  #-}
 {-# LANGUAGE FlexibleContexts  #-}
@@ -47,6 +48,7 @@ import Control.Applicative
 #ifdef PM36_HASKELL_SCRIPTING
 import GHC hiding (getContext)
 import Control.Exception
+import Graph.Trace
 import GHC.Paths
 #endif
 

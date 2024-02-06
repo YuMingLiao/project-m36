@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Relation.Parse.CSV where
 --parse Relations from CSV
 import ProjectM36.Base
@@ -22,6 +23,7 @@ import Control.Arrow
 import Text.Read hiding (parens)
 import Control.Applicative
 import Data.Either
+import Graph.Trace
 import Control.Monad (void)
 
 data CsvImportError = CsvParseError String |

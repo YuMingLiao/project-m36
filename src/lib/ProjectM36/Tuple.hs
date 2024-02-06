@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Tuple where
 import ProjectM36.Base
 import ProjectM36.Error
@@ -12,6 +13,7 @@ import qualified Data.Vector as V
 import Data.Either (rights)
 import Control.Monad
 import Control.Arrow
+import Graph.Trace
 import Data.Maybe
 
 emptyTuple :: RelationTuple

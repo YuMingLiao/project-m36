@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -fplugin=Graph.Trace #-}
 module ProjectM36.Notifications where
 import ProjectM36.Base
 import ProjectM36.Error
 import ProjectM36.RelationalExpression
 import ProjectM36.StaticOptimizer
 import qualified Data.Map as M
+import Graph.Trace
 import Data.Either (isRight)
 
 -- | Returns the notifications which should be triggered based on the transition from the first 'DatabaseContext' to the second 'DatabaseContext'.
