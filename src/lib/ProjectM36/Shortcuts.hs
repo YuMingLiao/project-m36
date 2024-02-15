@@ -24,6 +24,7 @@ import qualified Data.Map as M
 import qualified Data.Set as S
 import GHC.Exts (IsList(..))
 import Data.Convertible
+import Graph.Trace (TraceMute)
 
 default (Text)
 
@@ -100,7 +101,7 @@ data HaskAtomType a where
   Bool :: HaskAtomType Bool
   Attr :: Atomable a => HaskAtomType a  -- a Proxy-like value for type application.
 
-toAtomType'' :: Atomable a => HaskAtomType a -> AtomType
+toAtomType'' :: (TraceMute, Atomable a) => HaskAtomType a -> AtomType
 toAtomType'' (_ :: HaskAtomType a) = toAtomType (Proxy @a)
 
 -- usage: relation [tuple [#a 1, #b "b"], tuple [#a 2, #b "b"]]
