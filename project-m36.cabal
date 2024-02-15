@@ -64,7 +64,6 @@ Library
                      ProjectM36.AtomFunction,
                      ProjectM36.AtomFunctionError,
                      ProjectM36.ScriptSession,
-                     ProjectM36.Shortcuts,
                      ProjectM36.DatabaseContextFunction,
                      ProjectM36.DatabaseContextFunctionError,
                      ProjectM36.DatabaseContextFunctionUtils,
@@ -136,7 +135,7 @@ Library
                      ProjectM36.DDLType,
                      ProjectM36.RegisteredQuery,
                      ProjectM36.ReferencedTransactionIds
-    GHC-Options: -Wall -rdynamic -fplugin=Graph.Trace
+    GHC-Options: -Wall -rdynamic -fplugin=Graph.Trace 
     if os(windows)
       Build-Depends: Win32 >= 2.12
       Other-Modules: ProjectM36.Win32Handle
@@ -196,7 +195,8 @@ Executable tutd
                    base16-bytestring >= 1.0.0.0,
                    http-conduit,
                    modern-uri,
-                   http-types
+                   http-types,
+                   graph-trace
     Other-Modules: TutorialD.Interpreter,
                    TutorialD.Interpreter.Base,
                    TutorialD.Interpreter.DatabaseContextExpr,
@@ -220,7 +220,7 @@ Executable tutd
     if os(windows)
       GHC-Options: -Wall -threaded -eventlog -rtsopts
     else
-      GHC-Options: -Wall -threaded -rdynamic -eventlog -rtsopts
+      GHC-Options: -Wall -threaded -rdynamic -eventlog -rtsopts -fplugin=Graph.Trace
     if flag(profiler)
       GHC-Prof-Options: -fprof-auto -rtsopts -threaded
     Hs-Source-Dirs: ./src/bin
@@ -256,12 +256,13 @@ Executable project-m36-server
                    stm-containers,
                    list-t,
                    base64-bytestring,
-                   scientific
+                   scientific,
+                   graph-trace
     Main-Is: ./src/bin/ProjectM36/Server/project-m36-server.hs
     if os(windows)
       GHC-Options: -Wall -threaded -rtsopts
     else
-      GHC-Options: -Wall -threaded -rtsopts -rdynamic
+      GHC-Options: -Wall -threaded -rtsopts -rdynamic -fplugin=Graph.Trace
     if flag(profiler)
       GHC-Prof-Options: -fprof-auto -rtsopts -threaded -Wall
     Default-Language: Haskell2010
