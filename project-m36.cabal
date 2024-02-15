@@ -135,7 +135,7 @@ Library
                      ProjectM36.DDLType,
                      ProjectM36.RegisteredQuery,
                      ProjectM36.ReferencedTransactionIds
-    GHC-Options: -Wall -rdynamic -fplugin=Graph.Trace 
+    GHC-Options: -Wall -rdynamic -fplugin=Graph.Trace -fplugin-opt=Graph.Trace:trace-all -fno-full-laziness -fno-cse 
     if os(windows)
       Build-Depends: Win32 >= 2.12
       Other-Modules: ProjectM36.Win32Handle
@@ -220,7 +220,7 @@ Executable tutd
     if os(windows)
       GHC-Options: -Wall -threaded -eventlog -rtsopts
     else
-      GHC-Options: -Wall -threaded -rdynamic -eventlog -rtsopts -fplugin=Graph.Trace
+      GHC-Options: -Wall -threaded -rdynamic -eventlog -rtsopts -fplugin=Graph.Trace -fplugin-opt=Graph.Trace:trace-all -fno-full-laziness -fno-cse
     if flag(profiler)
       GHC-Prof-Options: -fprof-auto -rtsopts -threaded
     Hs-Source-Dirs: ./src/bin
@@ -262,7 +262,7 @@ Executable project-m36-server
     if os(windows)
       GHC-Options: -Wall -threaded -rtsopts
     else
-      GHC-Options: -Wall -threaded -rtsopts -rdynamic -fplugin=Graph.Trace
+      GHC-Options: -Wall -threaded -rtsopts -rdynamic -fplugin=Graph.Trace -fplugin-opt=Graph.Trace:trace-all -fno-full-laziness -fno-cse
     if flag(profiler)
       GHC-Prof-Options: -fprof-auto -rtsopts -threaded -Wall
     Default-Language: Haskell2010
