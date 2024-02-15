@@ -135,7 +135,7 @@ Library
                      ProjectM36.DDLType,
                      ProjectM36.RegisteredQuery,
                      ProjectM36.ReferencedTransactionIds
-    GHC-Options: -Wall -rdynamic -fplugin=Graph.Trace -fplugin-opt=Graph.Trace:trace-all -fno-full-laziness -fno-cse 
+    GHC-Options: -Wall -rdynamic -fplugin=Graph.Trace -fplugin-opt=Graph.Trace:trace-all 
     if os(windows)
       Build-Depends: Win32 >= 2.12
       Other-Modules: ProjectM36.Win32Handle
