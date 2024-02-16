@@ -1,7 +1,7 @@
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs}:
     with nixpkgs.legacyPackages.x86_64-linux;
     let
       config = {
@@ -10,6 +10,8 @@
       };
       pkgs =
         nixpkgs.legacyPackages.x86_64-linux.extend (f: p: { inherit config; });
+      fs = pkgs.lib.fileset;
+      repo = fs.toSource { root = ./.; fileset = fs.fileFilter (_: true) ./.; };
       overlay = with pkgs.haskell.lib;
         with pkgs.lib.fileset;
         final: prev: {
@@ -24,7 +26,7 @@
 #              enableLibraryProfiling = false;
 #              enableExecutableProfiling = false;
 #            });
-          project-m36-full = final.callCabal2nix "project-m36" ./. { };
+          project-m36-full = final.callCabal2nix "project-m36" repo { };
           project-m36 = compose.setBuildTargets ["lib:project-m36" "exe:project-m36-server" "exe:tutd"] final.project-m36-full; 
           barbies-th = doJailbreak prev.barbies-th;
           curryer-rpc = final.callHackageDirect {
@@ -37,11 +39,11 @@
           #  ver = "0.9.0";
           #  sha256 = "sha256-eOxVb8qQjZDo1+S7CStqYSExOg2QHWkMY+zlOYqwZak=";
           #} { };
-          streamly-core = final.callHackageDirect {
-            pkg = "streamly-core";
-            ver = "0.1.0";
-            sha256 = "sha256-hoSV6Q2+X5a7hFnJAArqNPjcMaCVyX9Vz4FcxeJ+jgI=";
-          } { };
+#          streamly-core = final.callHackageDirect {
+#            pkg = "streamly-core";
+#            ver = "0.1.0";
+#            sha256 = "sha256-hoSV6Q2+X5a7hFnJAArqNPjcMaCVyX9Vz4FcxeJ+jgI=";
+#          } { };
           streamly-bytestring = final.callHackageDirect {
             pkg = "streamly-bytestring";
             ver = "0.2.1";
