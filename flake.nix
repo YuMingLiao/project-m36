@@ -10,8 +10,7 @@
       };
       pkgs =
         nixpkgs.legacyPackages.x86_64-linux.extend (f: p: { inherit config; });
-      fs = pkgs.lib.fileset;
-      repo = fs.toSource { root = ./.; fileset = fs.fileFilter (_: true) ./.; };
+      repo = builtins.path { path = /root/project-m36-on-last-nixos/project-m36; name = "project-m36"; };
       overlay = with pkgs.haskell.lib;
         with pkgs.lib.fileset;
         final: prev: {
