@@ -1,9 +1,15 @@
+{-# LANGUAGE CPP #-}
 --Transaction Merge Engines
 module ProjectM36.TransactionGraph.Merge where
 import ProjectM36.Base
 import ProjectM36.Error
 import ProjectM36.RelationalExpression
+#if MIN_VERSION_base(4,18,0)
+import Control.Monad (foldM)
+import Control.Monad.Except
+#else
 import Control.Monad.Except hiding (join)
+#endif
 import qualified Data.Set as S
 import qualified Data.Map as M
 import qualified ProjectM36.TypeConstructorDef as TCD
@@ -62,7 +68,7 @@ unionMergeAtomFunctions prefer funcsA funcsB = case prefer of
   PreferFirst -> pure $ HS.union funcsA funcsB
   PreferSecond -> pure $ HS.union funcsB funcsA
   PreferNeither -> pure $ HS.union funcsA funcsB
-  
+
 unionMergeTypeConstructorMapping :: MergePreference -> TypeConstructorMapping -> TypeConstructorMapping -> Either MergeError TypeConstructorMapping  
 unionMergeTypeConstructorMapping prefer typesA typesB = do
   let allFuncNames = S.fromList $ map (\(tc,_) -> TCD.name tc) (typesA ++ typesB)

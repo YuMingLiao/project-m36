@@ -67,6 +67,7 @@ data Atom = IntegerAtom !Integer |
             UUIDAtom !UUID |
             RelationAtom !Relation |
             RelationalExprAtom !RelationalExpr | --used for returning inc deps
+            SubrelationFoldAtom !Relation !AttributeName |
             ConstructedAtom !DataConstructorName !AtomType [Atom]
             deriving (Eq, Show, Typeable, NFData, Generic, Read)
                      
@@ -85,6 +86,7 @@ instance Hashable Atom where
   hashWithSalt salt (UUIDAtom u) = salt `hashWithSalt` u
   hashWithSalt salt (RelationAtom r) = salt `hashWithSalt` r
   hashWithSalt salt (RelationalExprAtom re) = salt `hashWithSalt` re
+  hashWithSalt salt (SubrelationFoldAtom rel attrName) = salt `hashWithSalt` rel `hashWithSalt` attrName
 
 -- I suspect the definition of ConstructedAtomType with its name alone is insufficient to disambiguate the cases; for example, one could create a type named X, remove a type named X, and re-add it using different constructors. However, as long as requests are served from only one DatabaseContext at-a-time, the type name is unambiguous. This will become a problem for time-travel, however.
 -- | The AtomType uniquely identifies the type of a atom.
@@ -99,14 +101,12 @@ data AtomType = IntAtomType |
                 BoolAtomType |
                 UUIDAtomType |
                 RelationAtomType Attributes |
+                SubrelationFoldAtomType AtomType |
                 ConstructedAtomType TypeConstructorName TypeVarMap |
                 RelationalExprAtomType |
                 TypeVariableType TypeVarName
                 --wildcard used in Atom Functions and tuples for data constructors which don't provide all arguments to the type constructor
               deriving (Eq, NFData, Generic, Show, Read, Hashable)
-
-instance Ord AtomType where
-  compare = undefined
 
 -- this should probably be an ordered dictionary in order to be able to round-trip these arguments  
 type TypeVarMap = M.Map TypeVarName AtomType
@@ -236,14 +236,16 @@ data RelationalExprBase a =
   --relational variables should also be able to be explicitly-typed like in Haskell
   --- | Reference a relation variable by its name.
   RelationVariable RelVarName a |   
-  --- | Create a projection over attribute names. (Note that the 'AttributeNames' structure allows for the names to be inverted.)
+  -- | Extract a relation from an `Atom` that is a nested relation (a relation within a relation).  
+  RelationValuedAttribute AttributeName |
+  --- | Create a projection over attribute names. (Note that the 'AttributeNames' structure allows for the names to be inverted.)  
   Project (AttributeNamesBase a) (RelationalExprBase a) |
   --- | Create a union of two relational expressions. The expressions should have identical attributes.
   Union (RelationalExprBase a) (RelationalExprBase a) |
   --- | Create a join of two relational expressions. The join occurs on attributes which are identical. If the expressions have no overlapping attributes, the join becomes a cross-product of both tuple sets.
   Join (RelationalExprBase a) (RelationalExprBase a)  |
   --- | Rename an attribute (first argument) to another (second argument).
-  Rename AttributeName AttributeName (RelationalExprBase a) |
+  Rename (S.Set (AttributeName, AttributeName)) (RelationalExprBase a) | -- should the rename be a Map?
   --- | Return a relation containing all tuples of the first argument which do not appear in the second argument (minus).
   Difference (RelationalExprBase a) (RelationalExprBase a) |
   --- | Create a sub-relation composed of the first argument's attributes which will become an attribute of the result expression. The unreferenced attributes are not altered in the result but duplicate tuples in the projection of the expression minus the attribute names are compressed into one. For more information, <https://github.com/agentm/project-m36/blob/master/docs/introduction_to_the_relational_algebra.markdown#group read the relational algebra tutorial.>
@@ -258,13 +260,19 @@ data RelationalExprBase a =
   Extend (ExtendTupleExprBase a) (RelationalExprBase a) |
   --Summarize :: AtomExpr -> AttributeName -> RelationalExpr -> RelationalExpr -> RelationalExpr -- a special case of Extend
   --Evaluate relationalExpr with scoped views
-  With [(WithNameExprBase a, RelationalExprBase a)] (RelationalExprBase a)
+  With (WithNamesAssocsBase a) (RelationalExprBase a)
   deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable)
 
 instance Hashable RelationalExpr
-    
+
+type WithNamesAssocs = WithNamesAssocsBase ()
+
+type WithNamesAssocsBase a = [(WithNameExprBase a, RelationalExprBase a)]
+
+type GraphRefWithNameAssocs = [(GraphRefWithNameExpr, GraphRefRelationalExpr)]
+
 data WithNameExprBase a = WithNameExpr RelVarName a
-  deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable, Hashable)
+                        deriving (Show, Read, Eq, Generic, NFData, Foldable, Functor, Traversable, Hashable)
 
 type WithNameExpr = WithNameExprBase ()
 
@@ -499,11 +507,16 @@ instance Hashable AtomExpr
 
 type GraphRefAtomExpr = AtomExprBase GraphRefTransactionMarker
 
+type AggAtomFuncExprInfo = (AttributeName, AttributeName) -- (relvar attribute name, subrel attribute name)
+
 -- | An atom expression represents an action to take when extending a relation or when statically defining a relation or a new tuple.
 data AtomExprBase a = AttributeAtomExpr AttributeName |
+                      SubrelationAttributeAtomExpr AttributeName AttributeName |
                       NakedAtomExpr !Atom |
-                      FunctionAtomExpr FunctionName [AtomExprBase a] a |
+                      FunctionAtomExpr !FunctionName [AtomExprBase a] a |
+                      -- as a simple, first aggregation case, we can only apply an aggregation to a RelationAtom while "selecting" one attribute
                       RelationAtomExpr (RelationalExprBase a) |
+                      IfThenAtomExpr (AtomExprBase a) (AtomExprBase a) (AtomExprBase a) | -- if, then, else
                       ConstructedAtomExpr DataConstructorName [AtomExprBase a] a
                     deriving (Eq, Show, Read, Generic, NFData, Foldable, Functor, Traversable)
                        
@@ -647,6 +660,7 @@ attrTypeVars (Attribute _ aType) = case aType of
   BoolAtomType -> S.empty
   UUIDAtomType -> S.empty
   RelationalExprAtomType -> S.empty
+  SubrelationFoldAtomType{} -> S.empty
   (RelationAtomType attrs) -> S.unions (map attrTypeVars (V.toList (attributesVec attrs)))
   (ConstructedAtomType _ tvMap) -> M.keysSet tvMap
   (TypeVariableType nam) -> S.singleton nam
@@ -673,6 +687,7 @@ atomTypeVars ByteStringAtomType = S.empty
 atomTypeVars BoolAtomType = S.empty
 atomTypeVars UUIDAtomType = S.empty
 atomTypeVars RelationalExprAtomType = S.empty
+atomTypeVars SubrelationFoldAtomType{} = S.empty
 atomTypeVars (RelationAtomType attrs) = S.unions (map attrTypeVars (V.toList (attributesVec attrs)))
 atomTypeVars (ConstructedAtomType _ tvMap) = M.keysSet tvMap
 atomTypeVars (TypeVariableType nam) = S.singleton nam
